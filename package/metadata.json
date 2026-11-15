@@ -1,0 +1,14 @@
+{
+    "KPlugin": {
+        "Authors": [ { "Name": "Paddy" } ],
+        "Category": "Fun and Games",
+        "Description": "Ein kleines digitales Haustier für deinen Desktop – vom Ei bis zur Sternenreise.",
+        "Icon": "applications-games",
+        "Id": "org.paddy.widgetpet",
+        "License": "MIT",
+        "Name": "Widget Pet",
+        "Version": "1.0.0"
+    },
+    "KPackageStructure": "Plasma/Applet",
+    "X-Plasma-API-Minimum-Version": "6.0"
+}

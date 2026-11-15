@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kcfg xmlns="http://www.kde.org/standards/kcfg/1.0"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="http://www.kde.org/standards/kcfg/1.0 http://www.kde.org/standards/kcfg/1.0/kcfg.xsd">
+  <kcfgfile name=""/>
+  <group name="General">
+    <entry name="frameMode" type="Int"><default>0</default></entry>
+    <entry name="timeScale" type="Int"><default>1</default></entry>
+    <entry name="sleepStart" type="Int"><default>22</default></entry>
+    <entry name="sleepEnd" type="Int"><default>7</default></entry>
+  </group>
+  <group name="Pet">
+    <entry name="petState" type="String"><default></default></entry>
+    <entry name="ancestry" type="String"><default>[]</default></entry>
+  </group>
+</kcfg>
