@@ -10,19 +10,19 @@ rund 12 Wochen zu den Sternen – danach liegt ein neues Ei bereit und der Ahnen
 
 ```bash
 cd ~/Dokumente/widget-pet
-./install.sh
+bash install.sh
 ```
 
 Danach: Rechtsklick auf den Desktop → **Widgets hinzufügen…** → „Widget Pet“ suchen und auf den Desktop ziehen.
 
-Nach einem Update (`./install.sh` erneut ausführen) lädt Plasma die neue Version erst nach
+Nach einem Update (`bash install.sh` erneut ausführen) lädt Plasma die neue Version erst nach
 `systemctl --user restart plasma-plasmashell` oder einer Neuanmeldung.
 
 Alternativ lässt sich `widget-pet.plasmoid` über **Widgets hinzufügen… → Neue Widgets holen → Widget aus lokaler Datei installieren** einspielen.
 
 Zum Ausprobieren ohne Desktop: `sudo dnf install plasma-sdk` und dann `plasmoidviewer -a package`.
 
-Deinstallieren: `./uninstall.sh`
+Deinstallieren: `bash uninstall.sh`
 
 ## Bedienung
 
@@ -103,4 +103,4 @@ Wird das Widget vom Desktop entfernt, ist auch das Pet weg.
 
 ## Git
 
-Falls der Ordner noch kein Git-Repository ist: `./setup-git.sh` übernimmt die mitgelieferte Historie aus `widget-pet.bundle`.
+Falls der Ordner noch kein Git-Repository ist: `bash setup-git.sh` übernimmt die mitgelieferte Historie aus `widget-pet.bundle`.
