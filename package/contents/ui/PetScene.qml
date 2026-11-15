@@ -149,7 +149,6 @@ Item {
             font.weight: Font.DemiBold
             x: petBox.x + petBox.width * (0.68 + index * 0.08)
             y: petBox.y + petBox.height * 0.35
-            opacity: 0
             SequentialAnimation on opacity {
                 loops: Animation.Infinite
                 PauseAnimation { duration: zz.index * 700 }
