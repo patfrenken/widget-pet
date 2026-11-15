@@ -14,6 +14,14 @@ Item {
     property real lastX: -1
     property real lastY: -1
     property bool rubbing: false
+    property bool dizzy: false
+    property real speed: 0          // geglättete Streichelgeschwindigkeit in px/s
+    property real travel: 0         // gesamte Streichelstrecke für die Geschwindigkeitsmessung
+    property var trail: []          // [{t, d}] der letzten 250 ms
+    property real pawX: -100
+    property real pawY: -100
+
+    readonly property real wildSpeed: 1100
 
     readonly property real duration: 15
     readonly property color fg: Kirigami.Theme.textColor
@@ -25,6 +33,10 @@ Item {
         timeLeft = duration;
         dist = 0;
         lastX = -1;
+        speed = 0;
+        travel = 0;
+        trail = [];
+        dizzy = false;
         running = true;
         moveSpot();
     }
@@ -73,7 +85,7 @@ Item {
         species: game.petModel.species
         hue: game.petModel.hue
         senior: game.petModel.senior
-        expression: game.rubbing ? "love" : (game.running ? "happy" : "neutral")
+        expression: game.dizzy ? "sick" : (game.rubbing ? "love" : (game.running ? "happy" : "neutral"))
         transform: Scale { id: wiggle; origin.x: pet.width / 2; origin.y: pet.height * 0.93 }
     }
 
@@ -92,20 +104,41 @@ Item {
         }
     }
 
+    // Fängt die Maus im ganzen Spielbereich: Systemzeiger ausblenden, Pfote zeigen.
+    // So kann „Zeiger schütteln zum Finden“ (Plasma/macOS) nichts vergrößern.
     MouseArea {
-        anchors.fill: pet
+        id: area
+        anchors.fill: parent
         hoverEnabled: true
-        cursorShape: game.running ? Qt.OpenHandCursor : Qt.ArrowCursor
+        cursorShape: game.running ? Qt.BlankCursor : Qt.ArrowCursor
         onPositionChanged: mouse => {
+            game.pawX = mouse.x;
+            game.pawY = mouse.y;
             if (!game.running) return;
-            var gx = mouse.x + pet.x, gy = mouse.y + pet.y;
-            if (game.lastX >= 0) {
-                game.dist += Math.hypot(gx - game.lastX, gy - game.lastY);
-                game.rubbing = true;
-                rubOff.restart();
+            var now = Date.now();
+            var gx = mouse.x, gy = mouse.y;
+            var onPet = Math.hypot(gx - (pet.x + pet.width / 2), gy - (pet.y + pet.height * 0.62)) < pet.width * 0.42;
+            if (game.lastX >= 0 && onPet) {
+                var d = Math.hypot(gx - game.lastX, gy - game.lastY);
+                game.travel += d;
+                var tr = game.trail.filter(p => now - p.t <= 250);
+                tr.push({ t: now, d: game.travel });
+                game.trail = tr;
+                var span = Math.max(120, now - tr[0].t) / 1000;
+                game.speed = (game.travel - tr[0].d) / span;
+                if (game.speed > game.wildSpeed) {
+                    game.dizzy = true;
+                    game.rubbing = false;
+                    dizzyOff.restart();
+                } else if (!game.dizzy) {
+                    game.dist += d;
+                    game.rubbing = true;
+                    rubOff.restart();
+                }
             }
-            game.lastX = gx;
+            game.lastX = onPet ? gx : -1;
             game.lastY = gy;
+            if (!onPet || game.dizzy) return;
             var sx = spot.x + spot.width / 2, sy = spot.y + spot.height / 2;
             if (Math.hypot(gx - sx, gy - sy) < spot.width * 0.9) {
                 game.addHearts(3, sx, sy);
@@ -117,9 +150,31 @@ Item {
                 game.addHearts(1, gx, gy);
             }
         }
-        onExited: game.lastX = -1
+        onExited: { game.lastX = -1; game.pawX = -100; }
     }
 
+    LineIcon {
+        visible: game.running && area.containsMouse
+        x: game.pawX - width / 2
+        y: game.pawY - height / 2
+        width: 30
+        height: 30
+        name: "paw"
+        accent: "#f08ca4"
+        rotation: -15
+        z: 10
+    }
+
+    Text {
+        visible: game.dizzy
+        anchors { top: pet.top; horizontalCenter: pet.horizontalCenter; topMargin: pet.height * 0.08 }
+        text: qsTr("Sanfter, mir wird schwindelig!")
+        color: "#c46a6a"
+        font.pixelSize: 15
+        font.weight: Font.DemiBold
+    }
+
+    Timer { id: dizzyOff; interval: 900; onTriggered: { game.dizzy = false; game.speed = 0; game.trail = []; } }
     Timer { id: rubOff; interval: 260; onTriggered: game.rubbing = false }
     Timer { id: spotTimer; interval: 2600; repeat: true; running: game.running; onTriggered: game.moveSpot() }
 
@@ -132,7 +187,8 @@ Item {
             if (game.timeLeft <= 0) {
                 game.running = false;
                 game.rubbing = false;
-                game.finished(game.hearts, Math.floor(game.hearts / 5), Math.min(30, 10 + Math.round(game.hearts / 2)));
+                game.dizzy = false;
+                game.finished(game.hearts, Math.min(15, Math.floor(game.hearts / 5)), Math.min(30, 10 + Math.round(game.hearts / 2)));
             }
         }
     }

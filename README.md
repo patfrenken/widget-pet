@@ -68,7 +68,7 @@ Einzelbilder (512 × 512 px, transparenter Hintergrund) liegen in `docs/pets/`.
 
 | Spiel | Ab | Ablauf |
 |---|---|---|
-| Kuscheln | Kleinkind | 15 Sekunden mit der Maus über das Pet streichen. Glitzernde Kitzelstellen geben dreifach Herzen. |
+| Kuscheln | Kleinkind | 15 Sekunden sanft mit der Maus über das Pet streichen – der Zeiger wird dabei zur Pfote. Zu wildes Rubbeln macht das Pet schwindelig und bringt keine Herzen. Glitzernde Kitzelstellen geben dreifach Herzen. |
 | Hüpfflug | Teenager | Mit Klick oder Leertaste durch Wolkentürme flattern. Sterne geben Bonus-Münzen, es wird langsam schneller. |
 | Bubble-Tea-Bar | Erwachsen | 60-Sekunden-Schicht: Becher wie bestellt bauen (Tee + Topping, später mit Sahne) und servieren. Schnelle Bedienung und Serien geben mehr Trinkgeld. |
 

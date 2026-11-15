@@ -169,6 +169,26 @@ Canvas {
             ctx.beginPath(); ctx.arc(10, 12, 0.9, 0, Math.PI * 2); ctx.fill();
             ctx.beginPath(); ctx.arc(14, 12, 0.9, 0, Math.PI * 2); ctx.fill();
             break;
+        case "paw":       // Pfote als eigener Mauszeiger
+            ctx.fillStyle = a;
+            ctx.strokeStyle = "rgba(255,255,255,0.95)";
+            ctx.lineWidth = 1.4;
+            var toes = [[6.2, 9.2, 2.3], [10, 6.2, 2.5], [14.6, 6.4, 2.5], [18.2, 9.6, 2.3]];
+            for (i = 0; i < toes.length; i++) {
+                ctx.beginPath();
+                ctx.ellipse(toes[i][0] - toes[i][2], toes[i][1] - toes[i][2] * 1.2, toes[i][2] * 2, toes[i][2] * 2.4);
+                ctx.fill();
+                ctx.stroke();
+            }
+            ctx.beginPath();
+            ctx.moveTo(12.2, 11);
+            ctx.bezierCurveTo(17.5, 11, 19.5, 17.5, 16.8, 19.6);
+            ctx.bezierCurveTo(14.8, 21.2, 13.4, 19.8, 12.2, 19.8);
+            ctx.bezierCurveTo(11, 19.8, 9.6, 21.2, 7.6, 19.6);
+            ctx.bezierCurveTo(4.9, 17.5, 6.9, 11, 12.2, 11);
+            ctx.fill();
+            ctx.stroke();
+            break;
         case "star":
             ctx.fillStyle = a;
             ctx.beginPath();

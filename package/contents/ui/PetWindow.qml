@@ -100,7 +100,7 @@ Window {
                 opacity: 0.75
                 visible: win.phase === "intro"
                 text: (win.game ? win.game.desc : "") + "\n" + ({
-                    cuddle: qsTr("Fahre mit der Maus über dein Pet. Glitzernde Stellen geben extra Herzen."),
+                    cuddle: qsTr("Streichle dein Pet sanft mit der Maus – zu wildes Rubbeln macht es schwindelig. Glitzernde Stellen geben extra Herzen."),
                     flap: qsTr("Klick oder Leertaste zum Flattern. Sterne geben Bonus-Münzen."),
                     cafe: qsTr("Bau den Becher wie bestellt und serviere. Schnelle Bedienung = mehr Trinkgeld.")
                 })[win.page]

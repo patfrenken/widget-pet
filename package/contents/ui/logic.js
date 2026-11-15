@@ -48,7 +48,7 @@ var FOODS = [
 ];
 
 var GAMES = [
-    { id: "cuddle", label: "Kuscheln",       minStage: "baby",  desc: "Streichle dein Pet und finde die Kitzelstellen." },
+    { id: "cuddle", label: "Kuscheln",       minStage: "baby",  desc: "Sanft streicheln und Kitzelstellen finden." },
     { id: "flap",   label: "Hüpfflug",       minStage: "teen",  desc: "Flattere durch die Wolkentürme." },
     { id: "cafe",   label: "Bubble-Tea-Bar", minStage: "adult", desc: "60 Sekunden Schicht – so viele Bestellungen wie möglich." }
 ];
