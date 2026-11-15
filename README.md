@@ -60,7 +60,9 @@ Steht die Gesundheit online zwei Tage lang auf null, stirbt das Pet vorzeitig.
 
 Gute Pflege verlängert das Leben um bis zu 8 Tage. Ein Lumi- oder Kiko-Elternteil vererbt ein „gesegnetes“ Ei mit voller Gesundheit; die Hälfte der Münzen wird immer vererbt.
 
-![Alle Formen](docs/formen.png)
+![Alle Formen](docs/alle-pets.png)
+
+Einzelbilder (512 × 512 px, transparenter Hintergrund) liegen in `docs/pets/`.
 
 ## Minispiele
 
@@ -103,4 +105,4 @@ Wird das Widget vom Desktop entfernt, ist auch das Pet weg.
 
 ## Git
 
-Falls der Ordner noch kein Git-Repository ist: `bash setup-git.sh` übernimmt die mitgelieferte Historie aus `widget-pet.bundle`.
+`bash setup-git.sh` übernimmt die mitgelieferte Historie aus `widget-pet.bundle` – beim ersten Mal und nach jedem Update.

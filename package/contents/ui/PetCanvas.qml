@@ -262,11 +262,11 @@ Item {
                 ctx.rotate(bn * 0.22);
                 ctx.fillStyle = base;
                 ctx.beginPath();
-                ctx.ellipse(-w * 0.09, -h * 0.55, w * 0.18, h * 0.6);
+                ctx.ellipse(-w * 0.09, -h * 0.46, w * 0.18, h * 0.5);
                 ctx.fill();
                 ctx.fillStyle = "rgba(255,180,200,0.6)";
                 ctx.beginPath();
-                ctx.ellipse(-w * 0.045, -h * 0.45, w * 0.09, h * 0.42);
+                ctx.ellipse(-w * 0.045, -h * 0.38, w * 0.09, h * 0.34);
                 ctx.fill();
                 ctx.restore();
             }

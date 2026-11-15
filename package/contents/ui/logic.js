@@ -35,7 +35,7 @@ var SPECIES = {
     lumi:    { stage: "adult", label: "Lumi",    body: "round",    extra: "halo,wings",  size: 0.80, sat: 0.60, desc: "Strahlend – rundum gut umsorgt." },
     kiko:    { stage: "adult", label: "Kiko",    body: "round",    extra: "crown,wings", size: 0.80, sat: 0.66, desc: "Die perfekte Pflege. Royal!" },
     brumm:   { stage: "adult", label: "Brumm",   body: "squircle", extra: "horns",       size: 0.90, sat: 0.45, desc: "Kräftig und gelassen, braucht mehr Spaß." },
-    flausch: { stage: "adult", label: "Flausch", body: "cloud",    extra: "bunny",       size: 0.88, sat: 0.55, desc: "Wolkig verspielt, Gesundheit war wackelig." },
+    flausch: { stage: "adult", label: "Flausch", body: "cloud",    extra: "bunny",       size: 0.76, sat: 0.55, desc: "Wolkig verspielt, Gesundheit war wackelig." },
     grummel: { stage: "adult", label: "Grummel", body: "fluffy",   extra: "sprout,brows",size: 0.84, sat: 0.22, desc: "Grummelig – das Leben war hart." }
 };
 
