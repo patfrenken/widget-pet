@@ -8,21 +8,31 @@ rund 12 Wochen zu den Sternen – danach liegt ein neues Ei bereit und der Ahnen
 
 ## Installation
 
+Voraussetzung: KDE Plasma 6 (z. B. Fedora KDE Plasma Desktop 40 oder neuer).
+
+**Über den KDE Store (am einfachsten)**
+Rechtsklick auf den Desktop → **Widgets hinzufügen…** → **Neue Widgets holen** → **Neue Plasma-Widgets herunterladen** → nach „Widget Pet“ suchen → Installieren.
+
+**Aus dem GitHub-Release**
+`widget-pet.plasmoid` von der [Release-Seite](https://github.com/patfrenken/widget-pet/releases) herunterladen, dann
+**Widgets hinzufügen… → Neue Widgets holen → Widget aus lokaler Datei installieren** und die Datei auswählen.
+
+**Aus dem Quellcode**
+
 ```bash
-cd ~/Dokumente/widget-pet
+git clone https://github.com/patfrenken/widget-pet.git
+cd widget-pet
 bash install.sh
 ```
 
-Danach: Rechtsklick auf den Desktop → **Widgets hinzufügen…** → „Widget Pet“ suchen und auf den Desktop ziehen.
-
-Nach einem Update (`bash install.sh` erneut ausführen) lädt Plasma die neue Version erst nach
-`systemctl --user restart plasma-plasmashell` oder einer Neuanmeldung.
-
-Alternativ lässt sich `widget-pet.plasmoid` über **Widgets hinzufügen… → Neue Widgets holen → Widget aus lokaler Datei installieren** einspielen.
+Danach: Rechtsklick auf den Desktop → **Widgets hinzufügen…** → „Widget Pet“ auf den Desktop ziehen.
+Nach einem Update lädt Plasma die neue Version erst nach `systemctl --user restart plasma-plasmashell` oder einer Neuanmeldung.
 
 Zum Ausprobieren ohne Desktop: `sudo dnf install plasma-sdk` und dann `plasmoidviewer -a package`.
 
-Deinstallieren: `bash uninstall.sh`
+Deinstallieren: `bash uninstall.sh` oder über **Widgets hinzufügen…** → Widget anklicken → Papierkorb.
+
+> **GNOME, XFCE & Co.:** Das Widget braucht KDE Plasma 6 und läuft nicht auf anderen Desktops.
 
 ## Bedienung
 
@@ -98,11 +108,21 @@ package/
     PetWindow.qml          Fenster für Minispiele und Ahnenbaum
     AncestryView.qml       Ahnenbaum
     games/                 Kuscheln, Hüpfflug, Bubble-Tea-Bar
+tools/simulate.js          simuliert 12 Wochen mit verschiedenen Spielertypen (node tools/simulate.js)
 ```
 
 Der Spielstand liegt in der Widget-Konfiguration (`~/.config/plasma-org.kde.plasma.desktop-appletsrc`).
 Wird das Widget vom Desktop entfernt, ist auch das Pet weg.
 
-## Git
+## Entstehung
 
-`bash setup-git.sh` übernimmt die mitgelieferte Historie aus `widget-pet.bundle` – beim ersten Mal und nach jedem Update.
+Widget Pet ist ein Hobbyprojekt und wurde größtenteils KI-gestützt („vibe coded“) erstellt:
+Idee, Spielkonzept, Gestaltungsentscheidungen und Tests stammen von mir, der Code wurde mit
+**Claude Opus 5.5** (Anthropic) geschrieben – mit dem Plugin **Qt Development Skills** (Qt Group) für QML.
+Die Commits mit KI-Beteiligung sind mit `Co-Authored-By: Claude` gekennzeichnet.
+
+Fehler gefunden oder eine Idee für ein neues Pet oder Minispiel? Gern als [Issue](https://github.com/patfrenken/widget-pet/issues).
+
+## Lizenz
+
+[MIT](LICENSE)
