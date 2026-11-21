@@ -45,6 +45,7 @@ Name, Münzen, drei Werte und die Steuerleiste. In den Widget-Einstellungen kann
 | Spielen | Minispiele (je nach Alter freigeschaltet), bringen Laune und Münzen |
 | Saubermachen | Häufchen wegräumen |
 | Medizin | Heilt, wenn das Pet krank ist (sonst schadet sie ein bisschen) |
+| Wegschicken (Rucksack) | Schickt das Pet in die Kita, zur Schule, zur Arbeit oder zum Entspannen – je nach Alter |
 | Mehr | Ahnenbaum, Steckbrief, Neu beginnen |
 
 Ein Klick auf das Pet streichelt es (beim Ei: wärmen, das verkürzt die Brutzeit). Eine kleine Sprechblase zeigt das dringendste Bedürfnis.
@@ -54,10 +55,29 @@ Ein Klick auf das Pet streichelt es (beim Ei: wärmen, das verkürzt die Brutzei
 - **Sättigung** sinkt mit der Zeit, Essen füllt sie auf. Überfüttern schadet.
 - **Laune** sinkt mit der Zeit, Spielen und Streicheln heben sie. Spielt man sehr viel am Stück, bringt jede Runde etwas weniger Laune.
 - **Gesundheit** sinkt bei Hunger, Langeweile, Häufchen und Krankheit und erholt sich, wenn alles passt.
+  Bei schlechter Gesundheit, mehreren Häufchen oder großem Hunger wird das Pet schnell krank – ab und zu erwischt es auch einfach eine Erkältung.
 
 Nachts (Standard 22–7 Uhr) schläft das Pet; die Werte sinken dann langsamer, Füttern und Spielen gehen erst wieder morgens.
-Ist der PC aus, altert das Pet weiter, die Werte sinken aber nur gedrosselt und nie in den kritischen Bereich.
-Steht die Gesundheit online zwei Tage lang auf null, stirbt das Pet vorzeitig.
+Ist der PC aus, laufen Hunger, Laune und Verdauung fast normal weiter (etwa drei Viertel des Tempos), das Pet kann krank werden
+und Häufchen machen – es stirbt aber nie, während der PC aus ist.
+Steht die Gesundheit bei laufendem PC zwei Tage lang auf null, stirbt das Pet vorzeitig.
+
+### Wegschicken und Zurückrufen
+
+Bevor du den PC länger ausschaltest, schick dein Pet mit dem Rucksack-Knopf los – je nach Lebensabschnitt:
+
+| Lebensabschnitt | Ort | Besonderheit |
+|---|---|---|
+| Kleinkind | Kita | – |
+| Teenager | Schule | – |
+| Erwachsen | Arbeit in der Bubble-Tea-Bar | verdient 1,5 Münzen pro Stunde (max. 15 pro Schicht) |
+| Senior | Entspannen im Liegestuhl | – |
+
+Unterwegs sinken die Bedürfnisse nur stark gebremst, es macht keine Häufchen, wird nicht krank und zählt nicht in die Entwicklung hinein.
+Auf dem Desktop siehst du solange ein Bild vom Ort. Über **Zurückrufen** kommt es wieder nach Hause.
+Krank kann es nicht losgeschickt werden.
+
+![Unterwegs](docs/unterwegs.png)
 
 ## Lebenszyklus & Varianten
 
