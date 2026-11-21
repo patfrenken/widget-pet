@@ -4,3 +4,6 @@
 build/
 .directory
 *.bundle
+setup-git.sh
+VEROEFFENTLICHEN.md
+autor-setzen.sh
