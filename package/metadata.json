@@ -9,7 +9,7 @@
         "Id": "io.github.patfrenken.widgetpet",
         "License": "MIT",
         "Name": "Widget Pet",
-        "Version": "1.0.0",
+        "Version": "1.1.0",
         "Website": "https://github.com/patfrenken/widget-pet"
     },
     "KPackageStructure": "Plasma/Applet",

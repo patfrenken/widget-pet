@@ -46,8 +46,17 @@ Item {
         function onHopRequested() { scene.hop(); }
     }
 
+    // Ersatzbild, solange das Pet unterwegs ist
+    AwayCanvas {
+        anchors.fill: parent
+        visible: scene.petModel.away
+        place: scene.petModel.awayPlace
+        hue: scene.petModel.hue
+    }
+
     // Schatten
     Rectangle {
+        visible: !scene.petModel.away
         width: petBox.width * (scene.petModel.isEgg ? 0.40 : 0.5) * (1 + lift.y / (scene.petSize + 1))
         height: Math.max(4, width * 0.11)
         radius: height / 2
@@ -72,6 +81,7 @@ Item {
 
     Item {
         id: petBox
+        visible: !scene.petModel.away
         width: scene.petSize
         height: scene.petSize
         x: (scene.width - width) / 2 + scene.wander
@@ -139,7 +149,7 @@ Item {
 
     // Zzz
     Repeater {
-        model: scene.petModel.asleep && scene.animate ? 3 : 0
+        model: scene.petModel.asleep && scene.animate && !scene.petModel.away ? 3 : 0
         delegate: Text {
             id: zz
             required property int index
@@ -184,7 +194,7 @@ Item {
     // ------------------------------------------------------------ Animationen
     SequentialAnimation {
         id: breathe
-        running: scene.animate && !scene.petModel.dead
+        running: scene.animate && !scene.petModel.dead && !scene.petModel.away
         loops: Animation.Infinite
         ParallelAnimation {
             NumberAnimation { target: squash; property: "yScale"; to: 1.035; duration: scene.petModel.asleep ? 2600 : 1500; easing.type: Easing.InOutSine }
@@ -229,7 +239,7 @@ Item {
 
     Timer {
         interval: 2600 + Math.random() * 3500
-        running: scene.idle && !scene.petModel.isEgg && !scene.petModel.asleep
+        running: scene.idle && !scene.petModel.isEgg && !scene.petModel.asleep && !scene.petModel.away
         repeat: true
         onTriggered: {
             scene.blinking = true;
@@ -241,7 +251,7 @@ Item {
 
     Timer {
         interval: 7000
-        running: scene.idle && !scene.petModel.isEgg && !scene.petModel.asleep && !scene.petModel.sick
+        running: scene.idle && !scene.petModel.isEgg && !scene.petModel.asleep && !scene.petModel.sick && !scene.petModel.away
         repeat: true
         onTriggered: {
             var range = Math.max(0, (scene.width - petBox.width) / 2);

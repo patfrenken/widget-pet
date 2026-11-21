@@ -154,7 +154,7 @@ Window {
                 }
                 PillButton {
                     text: win.phase === "result" ? qsTr("Nochmal") : qsTr("Los geht's")
-                    enabled: !win.petModel.asleep && !win.petModel.dead
+                    enabled: !win.petModel.asleep && !win.petModel.dead && !win.petModel.away
                     onClicked: win.begin()
                 }
             }

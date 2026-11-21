@@ -87,6 +87,30 @@ Canvas {
             ctx.fill();
             ctx.restore();
             break;
+        case "bag":       // Rucksack: wegschicken
+            ctx.beginPath();
+            ctx.roundedRect(5.5, 7.5, 13, 13.5, 4, 4);
+            ctx.stroke();
+            ctx.beginPath();
+            ctx.moveTo(9, 7.5); ctx.lineTo(9, 5.5);
+            ctx.quadraticCurveTo(9, 3.5, 12, 3.5);
+            ctx.quadraticCurveTo(15, 3.5, 15, 5.5); ctx.lineTo(15, 7.5);
+            ctx.stroke();
+            ctx.beginPath();
+            ctx.roundedRect(8.5, 13, 7, 4.5, 1.5, 1.5);
+            ctx.stroke();
+            break;
+        case "home":      // Haus: zurückrufen
+            ctx.beginPath();
+            ctx.moveTo(4, 11.5); ctx.lineTo(12, 4.5); ctx.lineTo(20, 11.5);
+            ctx.stroke();
+            ctx.beginPath();
+            ctx.moveTo(6.5, 10); ctx.lineTo(6.5, 19.5); ctx.lineTo(17.5, 19.5); ctx.lineTo(17.5, 10);
+            ctx.stroke();
+            ctx.beginPath();
+            ctx.roundedRect(10, 13.5, 4, 6, 1, 1);
+            ctx.fill();
+            break;
         case "more":
             for (i = 0; i < 3; i++) { ctx.beginPath(); ctx.arc(6 + i * 6, 12, 1.6, 0, Math.PI * 2); ctx.fill(); }
             break;

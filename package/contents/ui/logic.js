@@ -55,6 +55,14 @@ var GAMES = [
 
 var STAGE_ORDER = ["egg", "baby", "teen", "adult"];
 
+// Orte zum Wegschicken – je nach Lebensabschnitt
+var PLACES = {
+    kita:   { label: "Kita",       go: "%1 geht in die Kita. Bis später!",       at: "%1 ist in der Kita",         back: "%1 ist zurück aus der Kita!" },
+    school: { label: "Schule",     go: "%1 macht sich auf den Weg zur Schule.",  at: "%1 ist in der Schule",       back: "%1 ist zurück aus der Schule!" },
+    work:   { label: "Arbeit",     go: "%1 geht arbeiten – in der Bubble-Tea-Bar.", at: "%1 ist auf der Arbeit",   back: "%1 hat Feierabend!" },
+    relax:  { label: "Entspannen", go: "%1 macht es sich im Liegestuhl gemütlich.", at: "%1 entspannt im Liegestuhl", back: "%1 ist erholt zurück!" }
+};
+
 // --------------------------------------------------------------------------- Helfer
 function clamp(v, lo, hi) { return v < lo ? lo : (v > hi ? hi : v); }
 function rnd(a, b) { return a + Math.random() * (b - a); }
@@ -85,7 +93,8 @@ function createEgg(now, parent) {
         ageMs: 0,
         warmMs: 0,
         hunger: 75, fun: 70, health: blessed ? 100 : 85,
-        poop: 0, poopTimerMs: rnd(3, 5) * HOUR, digest: 0, poopNeglectMs: 0,
+        poop: 0, poopTimerMs: rnd(2.5, 4) * HOUR, digest: 0, poopNeglectMs: 0,
+        away: null,
         sick: false, critMs: 0,
         coins: parent ? Math.floor(parent.coins * 0.5) + (blessed ? 15 : 5) : 10,
         lifespanMs: LIFE_MIN + LIFE_BONUS * 0.5,
@@ -109,6 +118,7 @@ function normalize(s, now) {
     if (!s.best) s.best = { cuddle: 0, flap: 0, cafe: 0 };
     if (!s.playLog) s.playLog = [];
     if (!s.life) s.life = { games: 0, earned: 0, fed: 0 };
+    if (s.away === undefined) s.away = null;
     return s;
 }
 
@@ -132,6 +142,7 @@ function isAsleep(s, sleepStart, sleepEnd) {
 function mood(s, asleep) {
     if (s.dead) return "dead";
     if (s.stage === "egg") return "egg";
+    if (s.away) return "away";
     if (asleep) return "sleep";
     if (s.sick) return "sick";
     if (s.health <= 15) return "weak";
@@ -143,7 +154,7 @@ function mood(s, asleep) {
 
 // Wichtigstes Bedürfnis für die Sprechblase
 function attention(s, asleep) {
-    if (s.dead || s.stage === "egg") return "";
+    if (s.dead || s.stage === "egg" || s.away) return "";
     if (s.sick) return "sick";
     if (asleep) return "";
     if (s.hunger < 25) return "hungry";
@@ -202,6 +213,7 @@ function evolve(s, events) {
 
 function die(s, cause, events) {
     s.dead = true;
+    s.away = null;
     s.deathCause = cause;
     s.diedAt = s.clock;
     events.push({ type: "death", cause: cause });
@@ -218,8 +230,28 @@ function ancestryEntry(s) {
 }
 
 // --------------------------------------------------------------------------- Zeitschritt
-function step(s, dt, offline, asleep, events) {
+// mode: "home"    – PC an, Pet zu Hause
+//       "offline" – PC war aus: Bedürfnisse leicht gebremst, aber kein Tod
+//       "away"    – in Kita/Schule/Arbeit/Entspannen: stark gebremst, nichts passiert
+var MODE = {
+    home:    { mult: 1.0,  neg: 1.0, sick: 1.0, maxPoop: MAX_POOP, floorNeed: 0,  floorHealth: 0 },
+    offline: { mult: 0.75, neg: 0.8, sick: 0.5, maxPoop: 2,        floorNeed: 8,  floorHealth: 12 },
+    away:    { mult: 0.4,  neg: 0.5, sick: 0,   maxPoop: 0,        floorNeed: 20, floorHealth: 30 }
+};
+
+function sickChance(s) {
+    var p = 0.003;                               // ab und zu einfach eine Erkältung
+    if (s.health < 50) p += 0.06;
+    if (s.health < 30) p += 0.15;
+    if (s.poop >= 2) p += 0.08;
+    if (s.poop >= 3) p += 0.10;
+    if (s.hunger < 15) p += 0.05;
+    return p;
+}
+
+function step(s, dt, mode, asleep, events) {
     var h = dt / HOUR;
+    var m = MODE[mode];
 
     if (s.stage === "egg") {
         s.ageMs += dt;
@@ -230,48 +262,51 @@ function step(s, dt, offline, asleep, events) {
     var rH = s.stage === "baby" ? 4.2 : (s.stage === "teen" ? 3.6 : 3.0);
     var rF = s.stage === "baby" ? 3.0 : (s.stage === "teen" ? 2.7 : 2.3);
     if (isSenior(s)) { rH = 2.6; rF = 2.8; }
-    var mult = (offline ? 0.4 : 1) * (asleep ? 0.3 : 1);
+    var mult = m.mult * (asleep ? 0.3 : 1);
 
     var pH = s.hunger, pF = s.fun, pHealth = s.health;
     s.hunger = clamp(s.hunger - rH * h * mult, 0, 100);
     s.fun = clamp(s.fun - rF * h * mult, 0, 100);
 
-    // Verdauung
-    if (!asleep) {
-        s.poopTimerMs -= dt * (offline ? 0.5 : 1);
+    // Verdauung (unterwegs geht das Häufchen nicht auf den Desktop)
+    if (!asleep && mode !== "away") {
+        s.poopTimerMs -= dt;
         if (s.poopTimerMs <= 0) {
-            s.poopTimerMs = rnd(3.5, 5.5) * HOUR;
-            if (s.digest > 0 && s.poop < (offline ? 1 : MAX_POOP)) {
+            s.poopTimerMs = rnd(2.75, 4.25) * HOUR;
+            if (s.digest > 0 && s.poop < m.maxPoop) {
                 s.poop += 1;
                 s.digest = Math.max(0, s.digest - 1);
                 events.push({ type: "poop" });
             }
         }
     }
-    s.poopNeglectMs = s.poop > 0 ? s.poopNeglectMs + dt : 0;
+    s.poopNeglectMs = s.poop > 0 && mode === "home" ? s.poopNeglectMs + dt : (s.poop > 0 ? s.poopNeglectMs : 0);
 
     // Gesundheit
     var d = 0;
     if (s.hunger < 15) d -= 4; else if (s.hunger < 35) d -= 1.5;
     if (s.fun < 15) d -= 2; else if (s.fun < 35) d -= 0.5;
-    d -= 1.2 * s.poop;
+    if (mode !== "away") d -= 1.2 * s.poop;
     if (s.sick) d -= 2.5;
-    if (s.hunger >= 50 && s.fun >= 40 && s.poop === 0 && !s.sick) d += 1.5;
-    if (d < 0) d *= offline ? 0.5 : 1;
+    if (s.hunger >= 50 && s.fun >= 40 && (s.poop === 0 || mode === "away") && !s.sick) d += 1.5;
+    if (d < 0) d *= m.neg;
     s.health = clamp(s.health + d * h * (asleep && d < 0 ? 0.5 : 1), 0, 100);
 
-    if (offline) {
-        // Offline nie in den kritischen Bereich rutschen
-        s.hunger = Math.max(s.hunger, Math.min(pH, 20));
-        s.fun = Math.max(s.fun, Math.min(pF, 20));
-        s.health = Math.max(s.health, Math.min(pHealth, 30));
-    } else if (!s.sick && (s.health < 35 || s.poop >= 3) && Math.random() < 0.12 * h) {
+    // Untergrenzen: offline und unterwegs nie in den kritischen Bereich
+    if (m.floorNeed > 0) {
+        s.hunger = Math.max(s.hunger, Math.min(pH, m.floorNeed));
+        s.fun = Math.max(s.fun, Math.min(pF, m.floorNeed));
+        s.health = Math.max(s.health, Math.min(pHealth, m.floorHealth));
+    }
+
+    // Krank werden
+    if (!s.sick && m.sick > 0 && Math.random() < sickChance(s) * m.sick * h) {
         s.sick = true;
         events.push({ type: "sick" });
     }
 
-    // Pflegefehler
-    if (!offline) {
+    // Pflegefehler zählen nur, wenn du da bist
+    if (mode === "home") {
         if (s.hunger <= 0 && !s.flags.hungerZero) { s.flags.hungerZero = true; mistake(s); }
         if (s.fun <= 0 && !s.flags.funZero) { s.flags.funZero = true; mistake(s); }
         if (s.poopNeglectMs > 3 * HOUR) { s.poopNeglectMs = 0; mistake(s); }
@@ -280,17 +315,21 @@ function step(s, dt, offline, asleep, events) {
     if (s.fun > 30) s.flags.funZero = false;
 
     // Kritischer Zustand
-    if (s.health <= 0 && !offline) {
+    if (s.health <= 0 && mode === "home") {
         s.critMs += dt;
         if (s.critMs >= CRITICAL_LIMIT) { die(s, "neglect", events); return; }
     } else {
         s.critMs = Math.max(0, s.critMs - dt * 0.5);
     }
 
-    // Statistik für die Entwicklung
-    s.stageStats.hSum += s.health * h;
-    s.stageStats.fSum += s.fun * h;
-    s.stageStats.t += h;
+    // Unterwegs: Statistik für die Entwicklung ruht, auf der Arbeit gibt es Lohn
+    if (mode === "away") {
+        if (s.away.place === "work") s.away.earned = Math.min(15, s.away.earned + 1.5 * h);
+    } else {
+        s.stageStats.hSum += s.health * h;
+        s.stageStats.fSum += s.fun * h;
+        s.stageStats.t += h;
+    }
 
     // Streichel-Budget auffüllen
     s.patRefillMs += dt;
@@ -316,7 +355,7 @@ function tick(s, now, opts) {
     while (simDt > 0 && !s.dead) {
         var dt = Math.min(MAX_STEP, simDt);
         var asleep = isAsleep(s, opts.sleepStart, opts.sleepEnd);
-        step(s, dt, offline, asleep, events);
+        step(s, dt, s.away ? "away" : (offline ? "offline" : "home"), asleep, events);
         s.clock += dt;
         simDt -= dt;
     }
@@ -327,6 +366,7 @@ function tick(s, now, opts) {
 // --------------------------------------------------------------------------- Aktionen
 function canAct(s, asleep) {
     if (s.dead) return "Dein Pet ist auf Sternenreise.";
+    if (s.away) return PLACES[s.away.place].at.replace("%1", s.name) + ".";
     if (s.stage === "egg") return "Noch im Ei … streichle es, um es zu wärmen.";
     if (asleep) return "Psst … es schläft.";
     return "";
@@ -348,7 +388,7 @@ function feed(s, foodId, asleep) {
     s.hunger = clamp(s.hunger + f.hunger, 0, 100);
     s.health = clamp(s.health + f.health, 0, 100);
     s.fun = clamp(s.fun + f.fun, 0, 100);
-    s.digest = Math.min(3, s.digest + (f.hunger >= 30 ? 1 : 0.5));
+    s.digest = Math.min(4, s.digest + (f.hunger >= 30 ? 1 : 0.75));
     s.life.fed += 1;
     var msgs = { rice: "Mampf!", apple: "Knackig!", cake: "Süß! ♥", bento: "Lecker ausgewogen!", feast: "Ein Festmahl! ✦" };
     return { ok: true, msg: msgs[f.id] };
@@ -364,19 +404,20 @@ function clean(s, asleep) {
 }
 
 function medicine(s) {
-    if (s.dead || s.stage === "egg") return { ok: false, msg: canAct(s, false) };
+    if (s.dead || s.stage === "egg" || s.away) return { ok: false, msg: canAct(s, false) };
     if (!s.sick) {
         s.health = clamp(s.health - 2, 0, 100);
         return { ok: false, msg: "Es ist doch gar nicht krank." };
     }
     s.sick = false;
-    s.health = clamp(s.health + 12, 0, 100);
+    s.health = clamp(s.health + 5, 0, 100);
     s.fun = clamp(s.fun - 5, 0, 100);
     return { ok: true, msg: "Bäh … aber es geht besser!" };
 }
 
 function pat(s, asleep) {
     if (s.dead) return { ok: false, msg: "" };
+    if (s.away) return { ok: false, msg: "" };
     if (s.stage === "egg") {
         if (s.warmMs < 30 * MIN) { s.warmMs += MIN; return { ok: true, msg: "Das Ei wird warm …" }; }
         return { ok: false, msg: "Kuschelig warm." };
@@ -385,6 +426,35 @@ function pat(s, asleep) {
     if (s.patBudget > 0) { s.patBudget -= 1; s.fun = clamp(s.fun + 1, 0, 100); return { ok: true, msg: "" }; }
     return { ok: false, msg: "" };
 }
+
+// Wegschicken & Zurückrufen
+function placeFor(s) {
+    if (isSenior(s)) return "relax";
+    return { baby: "kita", teen: "school", adult: "work" }[s.stage] || "";
+}
+
+function sendAway(s) {
+    if (s.dead || s.stage === "egg") return { ok: false, msg: canAct(s, false) };
+    if (s.away) return { ok: false, msg: canAct(s, false) };
+    if (s.sick) return { ok: false, msg: "Krank bleibt " + s.name + " lieber zu Hause." };
+    var place = placeFor(s);
+    s.away = { place: place, since: s.clock, earned: 0 };
+    return { ok: true, msg: PLACES[place].go.replace("%1", s.name) };
+}
+
+function recall(s) {
+    if (!s.away) return { ok: false, msg: "" };
+    var place = s.away.place, coins = Math.floor(s.away.earned);
+    s.coins += coins;
+    s.life.earned += coins;
+    s.fun = clamp(s.fun + 3, 0, 100);
+    s.away = null;
+    var msg = PLACES[place].back.replace("%1", s.name);
+    if (coins > 0) msg += " +" + coins + " Münzen";
+    return { ok: true, msg: msg };
+}
+
+function awayHours(s) { return s.away ? Math.max(0, (s.clock - s.away.since) / HOUR) : 0; }
 
 // Ergebnis eines Minispiels verbuchen
 function gameResult(s, gameId, score, coins, funBase, now) {
@@ -414,6 +484,7 @@ if (typeof module !== "undefined") {
         medicine: medicine, pat: pat, gameResult: gameResult, mood: mood, attention: attention,
         isAsleep: isAsleep, displayStage: displayStage, stageLabel: stageLabel,
         currentSpecies: currentSpecies, ancestryEntry: ancestryEntry, gameUnlocked: gameUnlocked,
-        ageDays: ageDays, hatchProgress: hatchProgress, isSenior: isSenior
+        ageDays: ageDays, hatchProgress: hatchProgress, isSenior: isSenior,
+        PLACES: PLACES, placeFor: placeFor, sendAway: sendAway, recall: recall, awayHours: awayHours
     };
 }

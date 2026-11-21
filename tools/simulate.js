@@ -29,11 +29,18 @@ const profiles={
     if(s.hunger<50) L.feed(s, s.coins>=9?'bento':'rice',asl);
     if(s.fun<55 && L.gameUnlocked(s,'cuddle')) L.gameResult(s,'cuddle',8,3,20,now);}},
   gelegentlich:{online:workday,every:8*H,act(s,now,L){ if(s.poop)L.clean(s); if(s.hunger<60)L.feed(s,'rice',false); if(s.sick)L.medicine(s);}},
+  arbeitsPC_wegschicken:{online:evening,every:2*H,act(s,now,L){const asl=L.isAsleep(s,22,7); const hr=new Date(now).getHours();
+    if(s.away && hr>=9 && hr<16) L.recall(s);
+    if(s.sick)L.medicine(s); if(s.poop)L.clean(s);
+    if(!s.away && s.hunger<50) L.feed(s, s.coins>=9?'bento':'rice',asl);
+    if(!s.away && s.fun<55 && L.gameUnlocked(s,'cuddle')) L.gameResult(s,'cuddle',8,3,20,now);
+    if(!s.away && hr>=15) { L.feed(s, s.coins>=9?'bento':'rice',asl); L.sendAway(s); } }},
   gelegentlichSpiel:{online:workday,every:6*H,act(s,now,L){ if(s.poop)L.clean(s); if(s.sick)L.medicine(s); if(s.hunger<60)L.feed(s,s.coins>=9?'bento':'rice',false); if(L.gameUnlocked(s,'cuddle'))L.gameResult(s,'cuddle',8,4,22,now);}},
   vernachlaessigt:{online:workday,every:1e15,act(){}},
 };
 for(const [n,p] of Object.entries(profiles)){
-  const {s,log}=run(p);
+  const {s,log}=run(p); const days=Math.max(1,L.ageDays(s));
   console.log(`\n== ${n}: ${s.dead?'gestorben ('+s.deathCause+')':'lebt'} nach ${L.ageDays(s)} Tagen (${(L.ageDays(s)/7).toFixed(1)} Wo) | Formen ${JSON.stringify(s.species)} | Fehler ${s.totalMistakes} | Münzen ${s.coins}`);
-  console.log(log.filter(e=>e[1]!=='poop').map(e=>e.join(':')).join('  '));
+  console.log(`   Häufchen/Tag ${(log.filter(e=>e[1]==='poop').length/days).toFixed(1)} | Krankheiten ${log.filter(e=>e[1]==='sick').length}`);
+  console.log('   '+log.filter(e=>e[1]!=='poop'&&e[1]!=='sick').map(e=>e.join(':')).join('  '));
 }

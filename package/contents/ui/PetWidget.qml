@@ -97,10 +97,41 @@ Item {
             StatBar { Layout.fillWidth: true; iconName: "health"; label: qsTr("Gesundheit"); value: widget.petModel.health; barColor: "#9ed3a9" }
         }
 
+        // Unterwegs: Hinweis & Zurückrufen
+        ColumnLayout {
+            Layout.fillWidth: true
+            visible: widget.petModel.away
+            spacing: 4
+            opacity: widget.chrome ? 1 : 0
+            enabled: opacity > 0.5
+            Behavior on opacity { NumberAnimation { duration: 240 } }
+
+            Text {
+                Layout.fillWidth: true
+                horizontalAlignment: Text.AlignHCenter
+                elide: Text.ElideRight
+                color: widget.fg
+                opacity: 0.7
+                font.pixelSize: Math.round((Kirigami.Theme.defaultFont.pixelSize > 0 ? Kirigami.Theme.defaultFont.pixelSize : 12) * 0.85)
+                text: {
+                    var h = widget.petModel.awayHours;
+                    var since = h < 1 ? qsTr("seit %1 Min.").arg(Math.max(1, Math.round(h * 60)))
+                              : (h < 48 ? qsTr("seit %1 Std.").arg(Math.floor(h)) : qsTr("seit %1 Tagen").arg(Math.floor(h / 24)));
+                    return widget.petModel.awayText + " · " + since;
+                }
+            }
+            PillButton {
+                Layout.alignment: Qt.AlignHCenter
+                text: qsTr("Zurückrufen")
+                onClicked: widget.petModel.recall()
+            }
+        }
+
         // Steuerung
         RowLayout {
             Layout.fillWidth: true
             Layout.alignment: Qt.AlignHCenter
+            visible: !widget.petModel.away
             spacing: 2
             opacity: widget.chrome && !widget.petModel.dead ? 1 : 0
             enabled: opacity > 0.5
@@ -130,6 +161,11 @@ Item {
                 enabled: !widget.petModel.isEgg
                 attention: widget.petModel.sick
                 onClicked: widget.petModel.medicine()
+            }
+            IconButton {
+                glyph: "bag"; tip: widget.petModel.sendLabel
+                enabled: !widget.petModel.isEgg && !widget.petModel.sick
+                onClicked: widget.petModel.sendAway()
             }
             IconButton {
                 glyph: "more"; tip: qsTr("Mehr")

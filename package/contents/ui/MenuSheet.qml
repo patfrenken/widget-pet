@@ -98,7 +98,7 @@ Rectangle {
                     trailing: unlocked && sheet.petModel.bestScore(modelData.id) > 0 ? "★ " + sheet.petModel.bestScore(modelData.id) : ""
                     glyph: "play"
                     locked: !unlocked
-                    enabled: unlocked && !sheet.petModel.asleep
+                    enabled: unlocked && !sheet.petModel.asleep && !sheet.petModel.away
                     onClicked: { sheet.openWindow(modelData.id); sheet.close(); }
                 }
             }

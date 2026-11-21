@@ -38,6 +38,12 @@ Item {
     readonly property bool senior: { rev; return ready && Logic.isSenior(s); }
     readonly property int ageDays: { rev; return ready ? Logic.ageDays(s) : 0; }
     readonly property int generation: { rev; return ready ? s.gen : 1; }
+    readonly property bool away: { rev; return ready && s.away !== null; }
+    readonly property string awayPlace: { rev; return ready && s.away ? s.away.place : (ready && !s.dead ? Logic.placeFor(s) : ""); }
+    readonly property string awayText: { rev; return ready && s.away ? Logic.PLACES[s.away.place].at.replace("%1", s.name) : ""; }
+    readonly property real awayHours: { rev; return ready ? Logic.awayHours(s) : 0; }
+    readonly property string sendLabel: ({ kita: qsTr("In die Kita schicken"), school: qsTr("Zur Schule schicken"),
+                                           work: qsTr("Zur Arbeit schicken"), relax: qsTr("Zum Entspannen schicken") })[awayPlace] || qsTr("Wegschicken")
 
     function opts() {
         return { timeScale: timeScale, sleepStart: config.sleepStart, sleepEnd: config.sleepEnd };
@@ -92,6 +98,8 @@ Item {
         return finish(res);
     }
     function clean() { tick(); return finish(Logic.clean(s, asleep)); }
+    function sendAway() { tick(); return finish(Logic.sendAway(s)); }
+    function recall() { tick(); return finish(Logic.recall(s)); }
     function medicine() { tick(); return finish(Logic.medicine(s)); }
     function pat() {
         var res = Logic.pat(s, asleep);
