@@ -111,6 +111,15 @@ Canvas {
             ctx.roundedRect(10, 13.5, 4, 6, 1, 1);
             ctx.fill();
             break;
+        case "globe":     // Sprache
+            ctx.beginPath(); ctx.arc(12, 12, 8.5, 0, Math.PI * 2); ctx.stroke();
+            ctx.beginPath(); ctx.ellipse(8, 3.5, 8, 17); ctx.stroke();
+            ctx.beginPath();
+            ctx.moveTo(3.5, 12); ctx.lineTo(20.5, 12);
+            ctx.moveTo(5, 7.5); ctx.lineTo(19, 7.5);
+            ctx.moveTo(5, 16.5); ctx.lineTo(19, 16.5);
+            ctx.stroke();
+            break;
         case "more":
             for (i = 0; i < 3; i++) { ctx.beginPath(); ctx.arc(6 + i * 6, 12, 1.6, 0, Math.PI * 2); ctx.fill(); }
             break;

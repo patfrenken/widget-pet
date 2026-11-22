@@ -52,6 +52,7 @@ Item {
         visible: scene.petModel.away
         place: scene.petModel.awayPlace
         hue: scene.petModel.hue
+        lang: scene.petModel.lang
     }
 
     // Schatten

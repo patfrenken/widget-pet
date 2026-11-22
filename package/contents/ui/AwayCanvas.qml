@@ -7,13 +7,15 @@ Canvas {
 
     property string place: "kita"
     property real hue: 200
+    property string lang: "en"
 
     antialiasing: true
     Accessible.role: Accessible.Graphic
-    Accessible.name: ({ kita: qsTr("Kita"), school: qsTr("Schule"), work: qsTr("Bubble-Tea-Bar"), relax: qsTr("Liegestuhl") })[place] || ""
+    Accessible.name: place
 
     onPlaceChanged: requestPaint()
     onHueChanged: requestPaint()
+    onLangChanged: requestPaint()
     onWidthChanged: requestPaint()
     onHeightChanged: requestPaint()
 
@@ -123,7 +125,7 @@ Canvas {
         rr(ctx, 89, 104, 22, 36, 6, "rgba(201,142,122,1)");
         circle(ctx, 106, 123, 1.8, "rgba(255,230,180,1)");
         rr(ctx, 80, 40, 40, 13, 4, "rgba(255,255,255,0.9)");
-        label(ctx, "KITA", 100, 46.5, "rgba(214,110,120,1)");
+        label(ctx, lang === "de" ? "KITA" : "DAYCARE", 100, 46.5, "rgba(214,110,120,1)");
     }
 
     function drawSchool(ctx) {
@@ -159,7 +161,7 @@ Canvas {
         ctx.restore();
         rr(ctx, 88, 102, 24, 38, 5, "rgba(176,140,120,1)");
         rr(ctx, 76, 64, 48, 12, 4, "rgba(255,255,255,0.9)");
-        label(ctx, "SCHULE", 100, 70, "rgba(120,100,170,1)");
+        label(ctx, lang === "de" ? "SCHULE" : "SCHOOL", 100, 70, "rgba(120,100,170,1)");
     }
 
     function drawWork(ctx) {

@@ -364,25 +364,30 @@ function tick(s, now, opts) {
 }
 
 // --------------------------------------------------------------------------- Aktionen
+// Meldungen sind deutsche Vorlagen mit Platzhaltern (%1, %2); übersetzt wird in der Oberfläche (strings.js).
+function fail(msg, args) { return { ok: false, msg: msg, args: args || [] }; }
+function done(msg, args) { return { ok: true, msg: msg, args: args || [] }; }
+
+// Gibt null zurück, wenn gehandelt werden darf, sonst ein fail-Ergebnis
 function canAct(s, asleep) {
-    if (s.dead) return "Dein Pet ist auf Sternenreise.";
-    if (s.away) return PLACES[s.away.place].at.replace("%1", s.name) + ".";
-    if (s.stage === "egg") return "Noch im Ei … streichle es, um es zu wärmen.";
-    if (asleep) return "Psst … es schläft.";
-    return "";
+    if (s.dead) return fail("Dein Pet ist auf Sternenreise.");
+    if (s.away) return fail(PLACES[s.away.place].at, [s.name]);
+    if (s.stage === "egg") return fail("Noch im Ei … streichle es, um es zu wärmen.");
+    if (asleep) return fail("Psst … es schläft.");
+    return null;
 }
 
 function feed(s, foodId, asleep) {
     var block = canAct(s, asleep);
-    if (block) return { ok: false, msg: block };
+    if (block) return block;
     var f = null;
     for (var i = 0; i < FOODS.length; i++) if (FOODS[i].id === foodId) f = FOODS[i];
-    if (!f) return { ok: false, msg: "" };
-    if (s.coins < f.price) return { ok: false, msg: "Nicht genug Münzen." };
+    if (!f) return fail("");
+    if (s.coins < f.price) return fail("Nicht genug Münzen.");
     if (s.hunger >= 95) {
         s.health = clamp(s.health - 3, 0, 100);
         s.fun = clamp(s.fun - 2, 0, 100);
-        return { ok: true, msg: "Uff … pappsatt!" };
+        return done("Uff … pappsatt!");
     }
     s.coins -= f.price;
     s.hunger = clamp(s.hunger + f.hunger, 0, 100);
@@ -391,40 +396,39 @@ function feed(s, foodId, asleep) {
     s.digest = Math.min(4, s.digest + (f.hunger >= 30 ? 1 : 0.75));
     s.life.fed += 1;
     var msgs = { rice: "Mampf!", apple: "Knackig!", cake: "Süß! ♥", bento: "Lecker ausgewogen!", feast: "Ein Festmahl! ✦" };
-    return { ok: true, msg: msgs[f.id] };
+    return done(msgs[f.id]);
 }
 
 function clean(s, asleep) {
-    if (s.dead || s.stage === "egg") return { ok: false, msg: canAct(s, false) };
-    if (s.poop === 0) return { ok: false, msg: "Schon blitzblank." };
+    if (s.dead || s.stage === "egg") return canAct(s, false);
+    if (s.poop === 0) return fail("Schon blitzblank.");
     s.poop = 0;
     s.poopNeglectMs = 0;
     s.fun = clamp(s.fun + 2, 0, 100);
-    return { ok: true, msg: "Blitzblank! ✧" };
+    return done("Blitzblank! ✧");
 }
 
 function medicine(s) {
-    if (s.dead || s.stage === "egg" || s.away) return { ok: false, msg: canAct(s, false) };
+    if (s.dead || s.stage === "egg" || s.away) return canAct(s, false);
     if (!s.sick) {
         s.health = clamp(s.health - 2, 0, 100);
-        return { ok: false, msg: "Es ist doch gar nicht krank." };
+        return fail("Es ist doch gar nicht krank.");
     }
     s.sick = false;
     s.health = clamp(s.health + 5, 0, 100);
     s.fun = clamp(s.fun - 5, 0, 100);
-    return { ok: true, msg: "Bäh … aber es geht besser!" };
+    return done("Bäh … aber es geht besser!");
 }
 
 function pat(s, asleep) {
-    if (s.dead) return { ok: false, msg: "" };
-    if (s.away) return { ok: false, msg: "" };
+    if (s.dead || s.away) return fail("");
     if (s.stage === "egg") {
-        if (s.warmMs < 30 * MIN) { s.warmMs += MIN; return { ok: true, msg: "Das Ei wird warm …" }; }
-        return { ok: false, msg: "Kuschelig warm." };
+        if (s.warmMs < 30 * MIN) { s.warmMs += MIN; return done("Das Ei wird warm …"); }
+        return fail("Kuschelig warm.");
     }
-    if (asleep) return { ok: false, msg: "Zzz …" };
-    if (s.patBudget > 0) { s.patBudget -= 1; s.fun = clamp(s.fun + 1, 0, 100); return { ok: true, msg: "" }; }
-    return { ok: false, msg: "" };
+    if (asleep) return fail("Zzz …");
+    if (s.patBudget > 0) { s.patBudget -= 1; s.fun = clamp(s.fun + 1, 0, 100); return done(""); }
+    return fail("");
 }
 
 // Wegschicken & Zurückrufen
@@ -434,24 +438,23 @@ function placeFor(s) {
 }
 
 function sendAway(s) {
-    if (s.dead || s.stage === "egg") return { ok: false, msg: canAct(s, false) };
-    if (s.away) return { ok: false, msg: canAct(s, false) };
-    if (s.sick) return { ok: false, msg: "Krank bleibt " + s.name + " lieber zu Hause." };
+    if (s.dead || s.stage === "egg" || s.away) return canAct(s, false);
+    if (s.sick) return fail("Krank bleibt %1 lieber zu Hause.", [s.name]);
     var place = placeFor(s);
     s.away = { place: place, since: s.clock, earned: 0 };
-    return { ok: true, msg: PLACES[place].go.replace("%1", s.name) };
+    return done(PLACES[place].go, [s.name]);
 }
 
 function recall(s) {
-    if (!s.away) return { ok: false, msg: "" };
+    if (!s.away) return fail("");
     var place = s.away.place, coins = Math.floor(s.away.earned);
     s.coins += coins;
     s.life.earned += coins;
     s.fun = clamp(s.fun + 3, 0, 100);
     s.away = null;
-    var msg = PLACES[place].back.replace("%1", s.name);
-    if (coins > 0) msg += " +" + coins + " Münzen";
-    return { ok: true, msg: msg };
+    var res = done(PLACES[place].back, [s.name]);
+    res.coins = coins;
+    return res;
 }
 
 function awayHours(s) { return s.away ? Math.max(0, (s.clock - s.away.since) / HOUR) : 0; }

@@ -17,7 +17,7 @@ Item {
     property string expression: "neutral"
 
     Accessible.role: Accessible.Graphic
-    Accessible.name: species === "egg" ? qsTr("Ei") : (Logic.SPECIES[species] ? Logic.SPECIES[species].label : "")
+    Accessible.name: species === "egg" ? "egg" : (Logic.SPECIES[species] ? Logic.SPECIES[species].label : "")
 
     readonly property var spec: Logic.SPECIES[species] || { body: "round", extra: "", size: 0.7, sat: 0.5 }
     readonly property real side: Math.min(width, height)

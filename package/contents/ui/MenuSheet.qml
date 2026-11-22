@@ -14,7 +14,7 @@ Rectangle {
     signal openWindow(string page)
 
     readonly property color fg: Kirigami.Theme.textColor
-    readonly property var stageNames: ({ baby: qsTr("Kleinkind"), teen: qsTr("Teenager"), adult: qsTr("Erwachsen") })
+    readonly property var stageNames: ({ baby: sheet.petModel.t("Kleinkind"), teen: sheet.petModel.t("Teenager"), adult: sheet.petModel.t("Erwachsen") })
     readonly property var foodColors: ({ rice: "#f3efe6", apple: "#f6b3a8", cake: "#f7c6dc", bento: "#c9e2b8", feast: "#f5d58f" })
 
     color: Kirigami.Theme.backgroundColor
@@ -37,7 +37,7 @@ Rectangle {
         Text {
             Layout.fillWidth: true
             Layout.leftMargin: 6
-            text: ({ food: qsTr("Füttern"), games: qsTr("Spielen"), more: qsTr("Mehr"), info: qsTr("Steckbrief"), confirm: qsTr("Neu beginnen?") })[sheet.mode] || ""
+            text: ({ food: sheet.petModel.t("Füttern"), games: sheet.petModel.t("Spielen"), more: sheet.petModel.t("Mehr"), info: sheet.petModel.t("Steckbrief"), confirm: sheet.petModel.t("Neu beginnen?") })[sheet.mode] || ""
             color: sheet.fg
             font.weight: Font.DemiBold
         }
@@ -53,7 +53,7 @@ Rectangle {
             Layout.preferredWidth: Kirigami.Units.gridUnit * 1.4
             Layout.preferredHeight: Kirigami.Units.gridUnit * 1.4
             glyph: "close"
-            tip: qsTr("Schließen")
+            tip: sheet.petModel.t("Schließen")
             onClicked: sheet.close()
         }
     }
@@ -76,9 +76,9 @@ Rectangle {
                 delegate: SheetRow {
                     required property var modelData
                     Layout.fillWidth: true
-                    title: modelData.label
-                    subtitle: "+" + modelData.hunger + " " + qsTr("Sättigung") + " · " + modelData.note
-                    trailing: modelData.price > 0 ? modelData.price : qsTr("gratis")
+                    title: sheet.petModel.t(modelData.label)
+                    subtitle: sheet.petModel.t("+%1 Sättigung · %2", modelData.hunger, sheet.petModel.t(modelData.note))
+                    trailing: modelData.price > 0 ? modelData.price : sheet.petModel.t("gratis")
                     showCoin: modelData.price > 0
                     dot: sheet.foodColors[modelData.id]
                     enabled: sheet.petModel.coins >= modelData.price
@@ -93,8 +93,8 @@ Rectangle {
                     required property var modelData
                     readonly property bool unlocked: sheet.petModel.gameUnlocked(modelData.id)
                     Layout.fillWidth: true
-                    title: modelData.label
-                    subtitle: unlocked ? modelData.desc : qsTr("ab %1").arg(sheet.stageNames[modelData.minStage])
+                    title: sheet.petModel.t(modelData.label)
+                    subtitle: unlocked ? sheet.petModel.t(modelData.desc) : sheet.petModel.t("ab %1").arg(sheet.stageNames[modelData.minStage])
                     trailing: unlocked && sheet.petModel.bestScore(modelData.id) > 0 ? "★ " + sheet.petModel.bestScore(modelData.id) : ""
                     glyph: "play"
                     locked: !unlocked
@@ -108,24 +108,32 @@ Rectangle {
                 visible: sheet.mode === "more"
                 Layout.fillWidth: true
                 glyph: "tree"
-                title: qsTr("Ahnenbaum")
-                subtitle: qsTr("%1 Generation(en)").arg(sheet.petModel.ancestry.length + 1)
+                title: sheet.petModel.t("Ahnenbaum")
+                subtitle: sheet.petModel.t("%1 Generation(en)").arg(sheet.petModel.ancestry.length + 1)
                 onClicked: { sheet.openWindow("tree"); sheet.close(); }
             }
             SheetRow {
                 visible: sheet.mode === "more"
                 Layout.fillWidth: true
+                glyph: "globe"
+                title: sheet.petModel.t("Sprache: Deutsch")
+                subtitle: sheet.petModel.lang === "de" ? "Switch to English" : "Auf Deutsch umstellen"
+                onClicked: sheet.petModel.setLanguage(sheet.petModel.lang === "de" ? "en" : "de")
+            }
+            SheetRow {
+                visible: sheet.mode === "more"
+                Layout.fillWidth: true
                 glyph: "info"
-                title: qsTr("Steckbrief")
-                subtitle: qsTr("Alter, Werte, Entwicklung")
+                title: sheet.petModel.t("Steckbrief")
+                subtitle: sheet.petModel.t("Alter, Werte, Entwicklung")
                 onClicked: sheet.show("info")
             }
             SheetRow {
                 visible: sheet.mode === "more"
                 Layout.fillWidth: true
                 glyph: "restart"
-                title: qsTr("Neu beginnen")
-                subtitle: qsTr("Aktuelles Pet wandert in den Ahnenbaum")
+                title: sheet.petModel.t("Neu beginnen")
+                subtitle: sheet.petModel.t("Aktuelles Pet wandert in den Ahnenbaum")
                 onClicked: sheet.show("confirm")
             }
 
@@ -143,9 +151,9 @@ Rectangle {
                     if (!p.ready) return "";
                     var spec = Logic.SPECIES[p.species];
                     return "<b>" + p.name + "</b> · " + p.speciesLabel + "<br>"
-                        + (spec ? "<i>" + spec.desc + "</i><br>" : "")
-                        + qsTr("Generation %1 · %2 · %3 Tage").arg(p.generation).arg(p.stageLabel).arg(p.ageDays) + "<br>"
-                        + qsTr("Sättigung %1 · Laune %2 · Gesundheit %3").arg(Math.round(p.hunger)).arg(Math.round(p.fun)).arg(Math.round(p.health));
+                        + (spec ? "<i>" + sheet.petModel.t(spec.desc) + "</i><br>" : "")
+                        + sheet.petModel.t("Generation %1 · %2 · %3 Tage").arg(p.generation).arg(p.stageLabel).arg(p.ageDays) + "<br>"
+                        + sheet.petModel.t("Sättigung %1 · Laune %2 · Gesundheit %3").arg(Math.round(p.hunger)).arg(Math.round(p.fun)).arg(Math.round(p.health));
                 }
             }
 
@@ -156,20 +164,20 @@ Rectangle {
                 Layout.margins: 6
                 color: sheet.fg
                 wrapMode: Text.WordWrap
-                text: qsTr("%1 wird in den Ahnenbaum eingetragen und ein neues Ei gelegt.").arg(sheet.petModel.name)
+                text: sheet.petModel.t("%1 wird in den Ahnenbaum eingetragen und ein neues Ei gelegt.").arg(sheet.petModel.name)
             }
             RowLayout {
                 visible: sheet.mode === "confirm"
                 Layout.fillWidth: true
                 SheetRow {
                     Layout.fillWidth: true
-                    title: qsTr("Abbrechen")
+                    title: sheet.petModel.t("Abbrechen")
                     glyph: "back"
                     onClicked: sheet.show("more")
                 }
                 SheetRow {
                     Layout.fillWidth: true
-                    title: qsTr("Neues Ei")
+                    title: sheet.petModel.t("Neues Ei")
                     glyph: "restart"
                     dot: "#f6c8c8"
                     onClicked: { sheet.petModel.restart(); sheet.close(); }

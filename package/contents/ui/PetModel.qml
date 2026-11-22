@@ -1,5 +1,6 @@
 import QtQuick
 import "logic.js" as Logic
+import "strings.js" as Strings
 
 // Zustand des Pets: laden, speichern, ticken, Aktionen ausführen.
 Item {
@@ -14,15 +15,16 @@ Item {
     signal fed(string foodId)
     signal hopRequested()
 
+    readonly property string lang: config.language === "de" ? "de" : "en"
     readonly property int timeScale: Math.max(1, config.timeScale || 1)
     readonly property bool ready: s !== null
     readonly property bool asleep: { rev; return ready && Logic.isAsleep(s, config.sleepStart, config.sleepEnd); }
     readonly property bool dead: { rev; return ready && s.dead; }
     readonly property bool isEgg: { rev; return !ready || s.stage === "egg"; }
     readonly property string stage: { rev; return ready ? Logic.displayStage(s) : "egg"; }
-    readonly property string stageLabel: { rev; return ready ? Logic.stageLabel(s) : ""; }
+    readonly property string stageLabel: { rev; return ready ? t(Logic.stageLabel(s)) : ""; }
     readonly property string species: { rev; return isEgg ? "egg" : Logic.currentSpecies(s); }
-    readonly property string speciesLabel: species !== "egg" && Logic.SPECIES[species] ? Logic.SPECIES[species].label : qsTr("Ei")
+    readonly property string speciesLabel: t(species !== "egg" && Logic.SPECIES[species] ? Logic.SPECIES[species].label : "Ei")
     readonly property string mood: { rev; return ready ? Logic.mood(s, asleep) : "egg"; }
     readonly property string need: { rev; return ready ? Logic.attention(s, asleep) : ""; }
     readonly property string name: { rev; return ready ? s.name : ""; }
@@ -40,10 +42,19 @@ Item {
     readonly property int generation: { rev; return ready ? s.gen : 1; }
     readonly property bool away: { rev; return ready && s.away !== null; }
     readonly property string awayPlace: { rev; return ready && s.away ? s.away.place : (ready && !s.dead ? Logic.placeFor(s) : ""); }
-    readonly property string awayText: { rev; return ready && s.away ? Logic.PLACES[s.away.place].at.replace("%1", s.name) : ""; }
+    readonly property string awayText: { rev; return ready && s.away ? t(Logic.PLACES[s.away.place].at, s.name) : ""; }
     readonly property real awayHours: { rev; return ready ? Logic.awayHours(s) : 0; }
-    readonly property string sendLabel: ({ kita: qsTr("In die Kita schicken"), school: qsTr("Zur Schule schicken"),
-                                           work: qsTr("Zur Arbeit schicken"), relax: qsTr("Zum Entspannen schicken") })[awayPlace] || qsTr("Wegschicken")
+    readonly property string sendLabel: ({ kita: t("In die Kita schicken"), school: t("Zur Schule schicken"),
+                                           work: t("Zur Arbeit schicken"), relax: t("Zum Entspannen schicken") })[awayPlace] || t("Wegschicken")
+
+    // Übersetzt eine deutsche Vorlage in die eingestellte Sprache; weitere Argumente ersetzen %1, %2 …
+    function t(text) {
+        var args = [];
+        for (var i = 1; i < arguments.length; i++) args.push(arguments[i]);
+        return Strings.tr(lang, text, args);
+    }
+
+    function setLanguage(l) { config.language = l; }
 
     function opts() {
         return { timeScale: timeScale, sleepStart: config.sleepStart, sleepEnd: config.sleepEnd };
@@ -76,18 +87,22 @@ Item {
     }
 
     function handleEvent(ev) {
-        var label = ev.species && Logic.SPECIES[ev.species] ? Logic.SPECIES[ev.species].label : "";
-        if (ev.type === "hatch") notify(qsTr("Geschlüpft! Hallo, %1!").arg(s.name), "evolve");
-        else if (ev.type === "evolve") notify(qsTr("%1 ist jetzt ein %2!").arg(s.name).arg(label), "evolve");
-        else if (ev.type === "sick") notify(qsTr("%1 fühlt sich krank.").arg(s.name), "warn");
-        else if (ev.type === "death") notify(ev.cause === "age" ? qsTr("%1 ist zu den Sternen gereist.").arg(s.name)
-                                                               : qsTr("%1 hat es leider nicht geschafft …").arg(s.name), "death");
+        var label = ev.species && Logic.SPECIES[ev.species] ? t(Logic.SPECIES[ev.species].label) : "";
+        if (ev.type === "hatch") notify(t("Geschlüpft! Hallo, %1!").arg(s.name), "evolve");
+        else if (ev.type === "evolve") notify(t("%1 ist jetzt ein %2!").arg(s.name).arg(label), "evolve");
+        else if (ev.type === "sick") notify(t("%1 fühlt sich krank.").arg(s.name), "warn");
+        else if (ev.type === "death") notify(ev.cause === "age" ? t("%1 ist zu den Sternen gereist.").arg(s.name)
+                                                               : t("%1 hat es leider nicht geschafft …").arg(s.name), "death");
     }
 
     function finish(res) {
         rev++;
         save();
-        if (res.msg) notify(res.msg, res.ok ? "info" : "warn");
+        if (res.msg) {
+            var text = Strings.tr(lang, res.msg, res.args || []);
+            if (res.coins > 0) text += " " + t("+%1 Münzen", res.coins);
+            notify(text, res.ok ? "info" : "warn");
+        }
         return res;
     }
 
@@ -128,7 +143,7 @@ Item {
         s = Logic.createEgg(Date.now(), s);
         rev++;
         save();
-        notify(qsTr("Ein neues Ei! Generation %1.").arg(s.gen), "evolve");
+        notify(t("Ein neues Ei! Generation %1.").arg(s.gen), "evolve");
     }
 
     function newEgg() { retire(s.deathCause || "age"); }

@@ -25,7 +25,7 @@ Window {
     minimumWidth: 360
     minimumHeight: 540
     visible: true
-    title: (page === "tree" ? qsTr("Ahnenbaum") : (game ? game.label : "")) + " · Widget Pet"
+    title: (page === "tree" ? petModel.t("Ahnenbaum") : (game ? petModel.t(game.label) : "")) + " · Widget Pet"
     color: Kirigami.Theme.backgroundColor
 
     onPageChanged: phase = "intro"
@@ -86,7 +86,7 @@ Window {
             Text {
                 Layout.fillWidth: true
                 horizontalAlignment: Text.AlignHCenter
-                text: win.phase === "result" ? (win.result && win.result.record ? qsTr("Neuer Rekord!") : qsTr("Geschafft!")) : (win.game ? win.game.label : "")
+                text: win.phase === "result" ? (win.result && win.result.record ? win.petModel.t("Neuer Rekord!") : win.petModel.t("Geschafft!")) : (win.game ? win.petModel.t(win.game.label) : "")
                 color: win.fg
                 font.pixelSize: 22
                 font.weight: Font.Bold
@@ -99,10 +99,10 @@ Window {
                 color: win.fg
                 opacity: 0.75
                 visible: win.phase === "intro"
-                text: (win.game ? win.game.desc : "") + "\n" + ({
-                    cuddle: qsTr("Streichle dein Pet sanft mit der Maus – zu wildes Rubbeln macht es schwindelig. Glitzernde Stellen geben extra Herzen."),
-                    flap: qsTr("Klick oder Leertaste zum Flattern. Sterne geben Bonus-Münzen."),
-                    cafe: qsTr("Bau den Becher wie bestellt und serviere. Schnelle Bedienung = mehr Trinkgeld.")
+                text: (win.game ? win.petModel.t(win.game.desc) : "") + "\n" + ({
+                    cuddle: win.petModel.t("Streichle dein Pet sanft mit der Maus – zu wildes Rubbeln macht es schwindelig. Glitzernde Stellen geben extra Herzen."),
+                    flap: win.petModel.t("Klick oder Leertaste zum Flattern. Sterne geben Bonus-Münzen."),
+                    cafe: win.petModel.t("Bau den Becher wie bestellt und serviere. Schnelle Bedienung = mehr Trinkgeld.")
                 })[win.page]
             }
 
@@ -114,11 +114,11 @@ Window {
                 columnSpacing: 16
                 rowSpacing: 4
 
-                Text { text: qsTr("Punkte"); color: win.fg; opacity: 0.7 }
+                Text { text: win.petModel.t("Punkte"); color: win.fg; opacity: 0.7 }
                 Text { text: win.lastScore; color: win.fg; font.weight: Font.DemiBold }
-                Text { text: qsTr("Münzen"); color: win.fg; opacity: 0.7 }
-                Text { text: win.result ? "+" + win.result.coins + (win.result.bonus ? qsTr("  (+%1 Tagesbonus)").arg(win.result.bonus) : "") : ""; color: win.fg; font.weight: Font.DemiBold }
-                Text { text: qsTr("Laune"); color: win.fg; opacity: 0.7 }
+                Text { text: win.petModel.t("Münzen"); color: win.fg; opacity: 0.7 }
+                Text { text: win.result ? "+" + win.result.coins + (win.result.bonus ? win.petModel.t("  (+%1 Tagesbonus)").arg(win.result.bonus) : "") : ""; color: win.fg; font.weight: Font.DemiBold }
+                Text { text: win.petModel.t("Laune"); color: win.fg; opacity: 0.7 }
                 Text { text: win.result ? "+" + win.result.fun : ""; color: win.fg; font.weight: Font.DemiBold }
             }
 
@@ -127,7 +127,7 @@ Window {
                 horizontalAlignment: Text.AlignHCenter
                 wrapMode: Text.WordWrap
                 visible: win.phase === "result" && win.result !== null && win.result.tired
-                text: qsTr("%1 wird langsam müde – eine Pause bringt mehr Spaß.").arg(win.petModel.name)
+                text: win.petModel.t("%1 wird langsam müde – eine Pause bringt mehr Spaß.").arg(win.petModel.name)
                 color: win.fg
                 opacity: 0.6
                 font.pixelSize: 12
@@ -137,7 +137,7 @@ Window {
                 Layout.fillWidth: true
                 horizontalAlignment: Text.AlignHCenter
                 visible: win.phase === "intro" && win.petModel.bestScore(win.page) > 0
-                text: qsTr("Rekord: %1").arg(win.petModel.bestScore(win.page))
+                text: win.petModel.t("Rekord: %1").arg(win.petModel.bestScore(win.page))
                 color: win.fg
                 opacity: 0.6
             }
@@ -148,12 +148,12 @@ Window {
                 spacing: 8
                 PillButton {
                     visible: win.phase === "result"
-                    text: qsTr("Fertig")
+                    text: win.petModel.t("Fertig")
                     subtle: true
                     onClicked: win.close()
                 }
                 PillButton {
-                    text: win.phase === "result" ? qsTr("Nochmal") : qsTr("Los geht's")
+                    text: win.phase === "result" ? win.petModel.t("Nochmal") : win.petModel.t("Los geht's")
                     enabled: !win.petModel.asleep && !win.petModel.dead && !win.petModel.away
                     onClicked: win.begin()
                 }

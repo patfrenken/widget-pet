@@ -2,7 +2,7 @@ import org.kde.plasma.configuration
 
 ConfigModel {
     ConfigCategory {
-        name: qsTr("Allgemein")
+        name: "General"
         icon: "applications-games"
         source: "configGeneral.qml"
     }

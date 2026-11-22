@@ -217,7 +217,7 @@ Item {
         visible: game.waiting
         anchors.centerIn: parent
         anchors.verticalCenterOffset: 70
-        text: qsTr("Klick oder Leertaste")
+        text: game.petModel.t("Klick oder Leertaste")
         color: game.fg
         opacity: 0.6
     }

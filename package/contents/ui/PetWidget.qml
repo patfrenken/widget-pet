@@ -92,9 +92,9 @@ Item {
             opacity: widget.chrome && !widget.petModel.isEgg && !widget.petModel.dead ? 1 : 0
             Behavior on opacity { NumberAnimation { duration: 240 } }
 
-            StatBar { Layout.fillWidth: true; iconName: "hunger"; label: qsTr("Sättigung"); value: widget.petModel.hunger; barColor: "#f2c27b" }
-            StatBar { Layout.fillWidth: true; iconName: "fun"; label: qsTr("Laune"); value: widget.petModel.fun; barColor: "#9fc7f0" }
-            StatBar { Layout.fillWidth: true; iconName: "health"; label: qsTr("Gesundheit"); value: widget.petModel.health; barColor: "#9ed3a9" }
+            StatBar { Layout.fillWidth: true; iconName: "hunger"; label: widget.petModel.t("Sättigung"); value: widget.petModel.hunger; barColor: "#f2c27b" }
+            StatBar { Layout.fillWidth: true; iconName: "fun"; label: widget.petModel.t("Laune"); value: widget.petModel.fun; barColor: "#9fc7f0" }
+            StatBar { Layout.fillWidth: true; iconName: "health"; label: widget.petModel.t("Gesundheit"); value: widget.petModel.health; barColor: "#9ed3a9" }
         }
 
         // Unterwegs: Hinweis & Zurückrufen
@@ -115,14 +115,14 @@ Item {
                 font.pixelSize: Math.round((Kirigami.Theme.defaultFont.pixelSize > 0 ? Kirigami.Theme.defaultFont.pixelSize : 12) * 0.85)
                 text: {
                     var h = widget.petModel.awayHours;
-                    var since = h < 1 ? qsTr("seit %1 Min.").arg(Math.max(1, Math.round(h * 60)))
-                              : (h < 48 ? qsTr("seit %1 Std.").arg(Math.floor(h)) : qsTr("seit %1 Tagen").arg(Math.floor(h / 24)));
+                    var since = h < 1 ? widget.petModel.t("seit %1 Min.").arg(Math.max(1, Math.round(h * 60)))
+                              : (h < 48 ? widget.petModel.t("seit %1 Std.").arg(Math.floor(h)) : widget.petModel.t("seit %1 Tagen").arg(Math.floor(h / 24)));
                     return widget.petModel.awayText + " · " + since;
                 }
             }
             PillButton {
                 Layout.alignment: Qt.AlignHCenter
-                text: qsTr("Zurückrufen")
+                text: widget.petModel.t("Zurückrufen")
                 onClicked: widget.petModel.recall()
             }
         }
@@ -139,25 +139,25 @@ Item {
 
             Item { Layout.fillWidth: true }
             IconButton {
-                glyph: "feed"; tip: qsTr("Füttern")
+                glyph: "feed"; tip: widget.petModel.t("Füttern")
                 enabled: !widget.petModel.isEgg
                 attention: widget.petModel.need === "hungry"
                 onClicked: sheet.show("food")
             }
             IconButton {
-                glyph: "play"; tip: qsTr("Spielen")
+                glyph: "play"; tip: widget.petModel.t("Spielen")
                 enabled: !widget.petModel.isEgg
                 attention: widget.petModel.need === "bored"
                 onClicked: sheet.show("games")
             }
             IconButton {
-                glyph: "clean"; tip: qsTr("Saubermachen")
+                glyph: "clean"; tip: widget.petModel.t("Saubermachen")
                 enabled: widget.petModel.poop > 0
                 attention: widget.petModel.need === "poop"
                 onClicked: widget.petModel.clean()
             }
             IconButton {
-                glyph: "heal"; tip: qsTr("Medizin")
+                glyph: "heal"; tip: widget.petModel.t("Medizin")
                 enabled: !widget.petModel.isEgg
                 attention: widget.petModel.sick
                 onClicked: widget.petModel.medicine()
@@ -168,7 +168,7 @@ Item {
                 onClicked: widget.petModel.sendAway()
             }
             IconButton {
-                glyph: "more"; tip: qsTr("Mehr")
+                glyph: "more"; tip: widget.petModel.t("Mehr")
                 onClicked: sheet.show("more")
             }
             Item { Layout.fillWidth: true }
@@ -220,14 +220,14 @@ Item {
 
         Text {
             anchors.horizontalCenter: parent.horizontalCenter
-            text: widget.petModel.name + " · " + qsTr("%1 Tage").arg(widget.petModel.ageDays)
+            text: widget.petModel.name + " · " + widget.petModel.t("%1 Tage").arg(widget.petModel.ageDays)
             color: widget.fg
             opacity: 0.7
         }
         SheetRow {
             width: widget.width * 0.7
-            title: qsTr("Neues Ei ausbrüten")
-            subtitle: qsTr("Generation %1").arg(widget.petModel.generation + 1)
+            title: widget.petModel.t("Neues Ei ausbrüten")
+            subtitle: widget.petModel.t("Generation %1").arg(widget.petModel.generation + 1)
             glyph: "restart"
             dot: "#f8e7b0"
             onClicked: widget.petModel.newEgg()

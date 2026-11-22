@@ -28,10 +28,10 @@ Item {
     }
 
     function causeText(e) {
-        if (e.current) return petModel.isEgg ? qsTr("wird gerade ausgebrütet") : qsTr("lebt gerade · %1 Tage").arg(e.days);
-        if (e.cause === "age") return qsTr("Sternenreise nach %1 Tagen").arg(e.days);
-        if (e.cause === "neglect") return qsTr("vernachlässigt · %1 Tage").arg(e.days);
-        return qsTr("neu begonnen nach %1 Tagen").arg(e.days);
+        if (e.current) return petModel.isEgg ? view.petModel.t("wird gerade ausgebrütet") : view.petModel.t("lebt gerade · %1 Tage").arg(e.days);
+        if (e.cause === "age") return view.petModel.t("Sternenreise nach %1 Tagen").arg(e.days);
+        if (e.cause === "neglect") return view.petModel.t("vernachlässigt · %1 Tage").arg(e.days);
+        return view.petModel.t("neu begonnen nach %1 Tagen").arg(e.days);
     }
 
     ColumnLayout {
@@ -39,13 +39,13 @@ Item {
         spacing: 8
 
         Text {
-            text: qsTr("Ahnenbaum")
+            text: view.petModel.t("Ahnenbaum")
             color: view.fg
             font.pixelSize: 22
             font.weight: Font.Bold
         }
         Text {
-            text: qsTr("%1 Generation(en)").arg(view.entries.length)
+            text: view.petModel.t("%1 Generation(en)").arg(view.entries.length)
             color: view.fg
             opacity: 0.6
         }
@@ -100,7 +100,7 @@ Item {
                                 Layout.fillWidth: true
                                 spacing: 2
                                 Text {
-                                    text: card.modelData.name + "  <font color='" + Qt.rgba(view.fg.r, view.fg.g, view.fg.b, 0.5) + "'>" + qsTr("Gen. %1").arg(card.modelData.gen) + "</font>"
+                                    text: card.modelData.name + "  <font color='" + Qt.rgba(view.fg.r, view.fg.g, view.fg.b, 0.5) + "'>" + view.petModel.t("Gen. %1").arg(card.modelData.gen) + "</font>"
                                     textFormat: Text.StyledText
                                     color: view.fg
                                     font.weight: Font.DemiBold
@@ -134,7 +134,7 @@ Item {
                                                 hue: card.modelData.hue
                                             }
                                             Text {
-                                                text: parent.modelData && Logic.SPECIES[parent.modelData] ? Logic.SPECIES[parent.modelData].label : ""
+                                                text: parent.modelData && Logic.SPECIES[parent.modelData] ? view.petModel.t(Logic.SPECIES[parent.modelData].label) : ""
                                                 color: view.fg
                                                 opacity: 0.55
                                                 font.pixelSize: 11

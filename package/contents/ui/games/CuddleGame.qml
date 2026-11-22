@@ -168,7 +168,7 @@ Item {
     Text {
         visible: game.dizzy
         anchors { top: pet.top; horizontalCenter: pet.horizontalCenter; topMargin: pet.height * 0.08 }
-        text: qsTr("Sanfter, mir wird schwindelig!")
+        text: game.petModel.t("Sanfter, mir wird schwindelig!")
         color: "#c46a6a"
         font.pixelSize: 15
         font.weight: Font.DemiBold

@@ -24,14 +24,14 @@ Item {
     readonly property real duration: 60
     readonly property color fg: Kirigami.Theme.textColor
     readonly property var bases: [
-        { id: "matcha", label: qsTr("Matcha"), color: "#a9d6a0" },
-        { id: "taro", label: qsTr("Taro"), color: "#c8b2e8" },
-        { id: "mango", label: qsTr("Mango"), color: "#f6c47a" },
-        { id: "milk", label: qsTr("Milchtee"), color: "#ecdcc4" }
+        { id: "matcha", label: game.petModel.t("Matcha"), color: "#a9d6a0" },
+        { id: "taro", label: game.petModel.t("Taro"), color: "#c8b2e8" },
+        { id: "mango", label: game.petModel.t("Mango"), color: "#f6c47a" },
+        { id: "milk", label: game.petModel.t("Milchtee"), color: "#ecdcc4" }
     ]
     readonly property var toppings: [
-        { id: "pearls", label: qsTr("Perlen"), color: "#8a7280" },
-        { id: "jelly", label: qsTr("Jelly"), color: "#f4a3bb" }
+        { id: "pearls", label: game.petModel.t("Perlen"), color: "#8a7280" },
+        { id: "jelly", label: game.petModel.t("Jelly"), color: "#f4a3bb" }
     ]
     readonly property var guestSpecies: ["mochi", "tropf", "funkel", "knuff", "wusel", "lumi", "brumm", "flausch"]
 
@@ -100,7 +100,7 @@ Item {
             }
         }
         combo = 0;
-        flash = qsTr("Passt zu keiner Bestellung");
+        flash = game.petModel.t("Passt zu keiner Bestellung");
         flashTimer.restart();
         clearCup();
     }
@@ -171,7 +171,7 @@ Item {
                     color: "#9fc7f0"
                 }
             }
-            Text { text: qsTr("%1 verkauft").arg(game.served); color: game.fg; opacity: 0.75 }
+            Text { text: game.petModel.t("%1 verkauft").arg(game.served); color: game.fg; opacity: 0.75 }
             LineIcon { Layout.preferredWidth: 16; Layout.preferredHeight: 16; name: "coin" }
             Text { text: game.tips; color: game.fg; font.weight: Font.DemiBold }
         }
@@ -302,7 +302,7 @@ Item {
             }
             PillButton {
                 Layout.fillWidth: true
-                text: qsTr("Sahne")
+                text: game.petModel.t("Sahne")
                 fill: "#fbf6ee"
                 ink: "#3b3140"
                 enabled: game.cupBase !== ""
@@ -310,14 +310,14 @@ Item {
             }
             PillButton {
                 Layout.fillWidth: true
-                text: qsTr("Weg")
+                text: game.petModel.t("Weg")
                 subtle: true
                 onClicked: game.clearCup()
             }
             PillButton {
                 Layout.fillWidth: true
                 Layout.columnSpan: 4
-                text: qsTr("Servieren")
+                text: game.petModel.t("Servieren")
                 enabled: game.cupBase !== "" && game.cupTopping !== ""
                 onClicked: game.serve()
             }
