@@ -1,23 +1,25 @@
 # Widget Pet
 
-Ein kleines digitales Haustier als KDE-Plasma-6-Widget für den Desktop (getestet für Fedora mit Plasma 6).
-Es schlüpft aus einem Ei, wächst über Kleinkind und Teenager zum Erwachsenen heran und reist nach
-rund 12 Wochen zu den Sternen – danach liegt ein neues Ei bereit und der Ahnenbaum wächst.
+🇬🇧 English · 🇩🇪 [Deutsche Version](README.de.md)
 
-![Widget](docs/widget.png)
+A tiny virtual pet for the KDE Plasma 6 desktop (tested on Fedora with Plasma 6).
+It hatches from an egg, grows from baby to teen to adult and, after about 12 weeks, travels to the stars –
+then a new egg is waiting and your family tree grows.
+
+![Widget](docs/en/widget.png)
 
 ## Installation
 
-Voraussetzung: KDE Plasma 6 (z. B. Fedora KDE Plasma Desktop 40 oder neuer).
+Requires KDE Plasma 6 (e.g. Fedora KDE Plasma Desktop 40 or newer).
 
-**Über den KDE Store (am einfachsten)**
-Rechtsklick auf den Desktop → **Widgets hinzufügen…** → **Neue Widgets holen** → **Neue Plasma-Widgets herunterladen** → nach „Widget Pet“ suchen → Installieren.
+**From the KDE Store (easiest)**
+Right-click the desktop → **Add Widgets…** → **Get New Widgets** → **Download New Plasma Widgets** → search for “Widget Pet” → Install.
 
-**Aus dem GitHub-Release**
-`widget-pet.plasmoid` von der [Release-Seite](https://github.com/patfrenken/widget-pet/releases) herunterladen, dann
-**Widgets hinzufügen… → Neue Widgets holen → Widget aus lokaler Datei installieren** und die Datei auswählen.
+**From a GitHub release**
+Download the `.plasmoid` file from the [releases page](https://github.com/patfrenken/widget-pet/releases), then
+**Add Widgets… → Get New Widgets → Install Widget From Local File** and pick the file.
 
-**Aus dem Quellcode**
+**From source**
 
 ```bash
 git clone https://github.com/patfrenken/widget-pet.git
@@ -25,124 +27,133 @@ cd widget-pet
 bash install.sh
 ```
 
-Danach: Rechtsklick auf den Desktop → **Widgets hinzufügen…** → „Widget Pet“ auf den Desktop ziehen.
-Nach einem Update lädt Plasma die neue Version erst nach `systemctl --user restart plasma-plasmashell` oder einer Neuanmeldung.
+Then right-click the desktop → **Add Widgets…** → drag “Widget Pet” onto the desktop.
+After an update, Plasma only loads the new version after `systemctl --user restart plasma-plasmashell` or logging in again.
 
-Zum Ausprobieren ohne Desktop: `sudo dnf install plasma-sdk` und dann `plasmoidviewer -a package`.
+To try it without touching your desktop: `sudo dnf install plasma-sdk`, then `plasmoidviewer -a package`.
 
-Deinstallieren: `bash uninstall.sh` oder über **Widgets hinzufügen…** → Widget anklicken → Papierkorb.
+Uninstall: `bash uninstall.sh`, or **Add Widgets…** → click the widget → trash icon.
 
-> **GNOME, XFCE & Co.:** Das Widget braucht KDE Plasma 6 und läuft nicht auf anderen Desktops.
+> **GNOME, XFCE & co.:** the widget needs KDE Plasma 6 and does not run on other desktops.
 
-## Bedienung
+## How to play
 
-Das Pet sitzt rahmenlos auf dem Desktop. Fährst du mit der Maus darüber, erscheinen ein dezenter Rahmen,
-Name, Münzen, drei Werte und die Steuerleiste. In den Widget-Einstellungen kannst du den Rahmen auch dauerhaft einblenden.
+The pet sits frameless on your desktop. Hover over it and a subtle frame appears with its name, coins,
+three stats and the control bar. In the widget settings you can keep the frame visible all the time.
 
-| Knopf | Wirkung |
+| Button | What it does |
 |---|---|
-| Füttern | Futtermenü – Reisbällchen ist gratis, besseres Essen kostet Münzen |
-| Spielen | Minispiele (je nach Alter freigeschaltet), bringen Laune und Münzen |
-| Saubermachen | Häufchen wegräumen |
-| Medizin | Heilt, wenn das Pet krank ist (sonst schadet sie ein bisschen) |
-| Wegschicken (Rucksack) | Schickt das Pet in die Kita, zur Schule, zur Arbeit oder zum Entspannen – je nach Alter |
-| Mehr | Ahnenbaum, Steckbrief, Neu beginnen |
+| Feed | Food menu – rice balls are free, better food costs coins |
+| Play | Mini games (unlocked with age), give mood and coins |
+| Clean up | Removes poop |
+| Medicine | Cures your pet when it's sick (hurts a little otherwise) |
+| Send away (backpack) | Sends the pet to daycare, school, work or off to relax – depending on its age |
+| More | Family tree, language (English/German), profile, start over |
 
-Ein Klick auf das Pet streichelt es (beim Ei: wärmen, das verkürzt die Brutzeit). Eine kleine Sprechblase zeigt das dringendste Bedürfnis.
+Clicking the pet pets it (for the egg: keeps it warm, which shortens hatching). A small speech bubble shows its most urgent need.
 
-### Werte
+**Language:** English by default. **More → Language: English** switches to German instantly (and back) – also available in the widget settings.
 
-- **Sättigung** sinkt mit der Zeit, Essen füllt sie auf. Überfüttern schadet.
-- **Laune** sinkt mit der Zeit, Spielen und Streicheln heben sie. Spielt man sehr viel am Stück, bringt jede Runde etwas weniger Laune.
-- **Gesundheit** sinkt bei Hunger, Langeweile, Häufchen und Krankheit und erholt sich, wenn alles passt.
-  Bei schlechter Gesundheit, mehreren Häufchen oder großem Hunger wird das Pet schnell krank – ab und zu erwischt es auch einfach eine Erkältung.
+### Stats
 
-Nachts (Standard 22–7 Uhr) schläft das Pet; die Werte sinken dann langsamer, Füttern und Spielen gehen erst wieder morgens.
-Ist der PC aus, laufen Hunger, Laune und Verdauung fast normal weiter (etwa drei Viertel des Tempos), das Pet kann krank werden
-und Häufchen machen – es stirbt aber nie, während der PC aus ist.
-Steht die Gesundheit bei laufendem PC zwei Tage lang auf null, stirbt das Pet vorzeitig.
+- **Fullness** drops over time; food fills it up. Overfeeding is bad for it.
+- **Mood** drops over time; playing and petting raise it. Playing a lot in a row gives a little less mood each round.
+- **Health** drops with hunger, boredom, poop and sickness and recovers when everything is fine.
+  With poor health, several poops or great hunger your pet quickly gets sick – and now and then it simply catches a cold.
 
-### Wegschicken und Zurückrufen
+At night (10 pm – 7 am by default) your pet sleeps; stats drop more slowly and feeding and playing wait until morning.
+While your PC is off, hunger, mood and digestion keep going at about three quarters of the normal pace – your pet can get sick
+and poop, but it never dies while your PC is off.
+If its health stays at zero for two days while your PC is on, it dies early.
 
-Bevor du den PC länger ausschaltest, schick dein Pet mit dem Rucksack-Knopf los – je nach Lebensabschnitt:
+### Sending away and calling back
 
-| Lebensabschnitt | Ort | Besonderheit |
+Before you switch off your PC for a while, send your pet off with the backpack button – depending on its age:
+
+| Life stage | Place | Bonus |
 |---|---|---|
-| Kleinkind | Kita | – |
-| Teenager | Schule | – |
-| Erwachsen | Arbeit in der Bubble-Tea-Bar | verdient 1,5 Münzen pro Stunde (max. 15 pro Schicht) |
-| Senior | Entspannen im Liegestuhl | – |
+| Baby | Daycare | – |
+| Teen | School | – |
+| Adult | Work at the bubble tea bar | earns 1.5 coins per hour (max. 15 per shift) |
+| Senior | Relaxing in a deck chair | – |
 
-Unterwegs sinken die Bedürfnisse nur stark gebremst, es macht keine Häufchen, wird nicht krank und zählt nicht in die Entwicklung hinein.
-Auf dem Desktop siehst du solange ein Bild vom Ort. Über **Zurückrufen** kommt es wieder nach Hause.
-Krank kann es nicht losgeschickt werden.
+While away its needs drop only very slowly, it doesn't poop, doesn't get sick and doesn't count towards its evolution.
+Your desktop shows a picture of the place in the meantime. **Call back** brings it home.
+It can't be sent away while sick.
 
-![Unterwegs](docs/unterwegs.png)
+![Away](docs/en/away.png)
 
-## Lebenszyklus & Varianten
+## Life cycle & forms
 
-| Stadium | Dauer | Varianten (abhängig von Gesundheit & Laune im Stadium davor) |
+| Stage | Duration | Forms (depending on health & mood in the previous stage) |
 |---|---|---|
-| Ei | 2 Stunden (durch Wärmen bis zu 30 Min. kürzer) | Muster gepunktet oder gestreift, Farbe vom Elternteil geerbt |
-| Kleinkind | 2 Wochen | Mochi (gepunktetes Ei), Tröpfi (gestreiftes Ei) |
-| Teenager | 3 Wochen | Funkel (gesund + froh), Knuff (gesund), Wusel (froh), Mopp (vernachlässigt) |
-| Erwachsen | ca. 6 Wochen, die letzte Woche als Senior mit Brille | Kiko (perfekt, selten), Lumi (sehr gut), Brumm (gesund), Flausch (froh), Grummel (vernachlässigt) |
+| Egg | 2 hours (up to 30 min shorter if kept warm) | dotted or striped, colour inherited from the parent |
+| Baby | 2 weeks | Mochi (dotted egg), Drippy (striped egg) |
+| Teen | 3 weeks | Sparkle (healthy + happy), Snug (healthy), Fuzzy (happy), Mop (neglected) |
+| Adult | about 6 weeks, the last week as a senior with glasses | Kiko (perfect, rare), Lumi (very good), Rumble (healthy), Fluff (happy), Grumble (neglected) |
 
-Gute Pflege verlängert das Leben um bis zu 8 Tage. Ein Lumi- oder Kiko-Elternteil vererbt ein „gesegnetes“ Ei mit voller Gesundheit; die Hälfte der Münzen wird immer vererbt.
+Good care extends its life by up to 8 days. A Lumi or Kiko parent passes on a “blessed” egg with full health; half of the coins are always inherited.
 
-![Alle Formen](docs/alle-pets.png)
+![All forms](docs/en/all-pets.png)
 
-Einzelbilder (512 × 512 px, transparenter Hintergrund) liegen in `docs/pets/`.
+Single images (512 × 512 px, transparent background) are in `docs/pets/`.
 
-## Minispiele
+## Mini games
 
-| Spiel | Ab | Ablauf |
+| Game | From | How it works |
 |---|---|---|
-| Kuscheln | Kleinkind | 15 Sekunden sanft mit der Maus über das Pet streichen – der Zeiger wird dabei zur Pfote. Zu wildes Rubbeln macht das Pet schwindelig und bringt keine Herzen. Glitzernde Kitzelstellen geben dreifach Herzen. |
-| Hüpfflug | Teenager | Mit Klick oder Leertaste durch Wolkentürme flattern. Sterne geben Bonus-Münzen, es wird langsam schneller. |
-| Bubble-Tea-Bar | Erwachsen | 60-Sekunden-Schicht: Becher wie bestellt bauen (Tee + Topping, später mit Sahne) und servieren. Schnelle Bedienung und Serien geben mehr Trinkgeld. |
+| Cuddle | Baby | Gently stroke your pet with the mouse for 15 seconds – the cursor turns into a paw. Rubbing too wildly makes it dizzy and gives no hearts. Sparkly tickle spots give triple hearts. |
+| Hop Flight | Teen | Click or press space to flutter through cloud towers. Stars give bonus coins; it slowly speeds up. |
+| Bubble Tea Bar | Adult | A 60-second shift: build each cup as ordered (tea + topping, later with cream) and serve it. Fast service and streaks earn bigger tips. |
 
-Das erste Spiel des Tages bringt 5 Münzen Tagesbonus. Rekorde werden pro Spiel gespeichert und vererbt.
+The first game of the day gives a 5-coin daily bonus. Records are saved per game and inherited.
 
-![Spielfenster](docs/fenster.png)
+![Game windows](docs/en/windows.png)
 
-## Zeitraffer zum Testen
+## Time-lapse for testing
 
-In den Widget-Einstellungen gibt es neben Echtzeit die Stufen **60×** (ein Leben ≈ 1,4 Tage) und
-**1440×** (ein Leben ≈ 1,4 Stunden). Ideal, um alle Stadien und Varianten zu sehen.
+Besides real time, the widget settings offer **60×** (one life ≈ 1.4 days) and
+**1440×** (one life ≈ 1.4 hours) – handy to see every stage and form.
 
-## Aufbau
+## Project layout
 
 ```
 package/
-  metadata.json            Plasma-Paketbeschreibung
-  contents/config/         Einstellungen (main.xml, config.qml)
+  metadata.json            Plasma package description
+  contents/config/         settings (main.xml, config.qml)
   contents/ui/
-    main.qml               Einstieg (PlasmoidItem)
-    logic.js               Spiellogik ohne QML – auch mit Node testbar
-    PetModel.qml           Zustand laden/speichern, Takt, Aktionen
-    PetWidget.qml          Widget mit Hover-Rahmen und Steuerung
-    PetScene.qml           Bühne mit Animationen
-    PetCanvas.qml          zeichnet Pets und Eier
-    MenuSheet.qml          Futter-, Spiele- und Mehr-Menü
-    PetWindow.qml          Fenster für Minispiele und Ahnenbaum
-    AncestryView.qml       Ahnenbaum
-    games/                 Kuscheln, Hüpfflug, Bubble-Tea-Bar
-tools/simulate.js          simuliert 12 Wochen mit verschiedenen Spielertypen (node tools/simulate.js)
+    main.qml               entry point (PlasmoidItem)
+    logic.js               game logic without QML – testable with Node
+    strings.js             translations (German → English)
+    PetModel.qml           load/save state, clock, actions
+    PetWidget.qml          widget with hover frame and controls
+    PetScene.qml           stage with animations
+    PetCanvas.qml          draws pets and eggs
+    AwayCanvas.qml         pictures for daycare, school, work, deck chair
+    MenuSheet.qml          food, games and more menu
+    PetWindow.qml          window for mini games and family tree
+    AncestryView.qml       family tree
+    games/                 Cuddle, Hop Flight, Bubble Tea Bar
+tools/simulate.js          simulates 12 weeks with different player types (node tools/simulate.js)
+tools/check-translations.js  checks that every text is translated (node tools/check-translations.js)
+build-plasmoid.sh          builds widget-pet-<version>.plasmoid
 ```
 
-Der Spielstand liegt in der Widget-Konfiguration (`~/.config/plasma-org.kde.plasma.desktop-appletsrc`).
-Wird das Widget vom Desktop entfernt, ist auch das Pet weg.
+Texts in the code are written in German and translated to English in `strings.js`;
+`tools/check-translations.js` reports missing translations.
 
-## Entstehung
+Your pet's state is stored in the widget configuration (`~/.config/plasma-org.kde.plasma.desktop-appletsrc`).
+If you remove the widget from your desktop, the pet is gone too.
 
-Widget Pet ist ein Hobbyprojekt und wurde größtenteils KI-gestützt („vibe coded“) erstellt:
-Idee, Spielkonzept, Gestaltungsentscheidungen und Tests stammen von mir, der Code wurde mit
-**Claude Opus 5.5** (Anthropic) geschrieben – mit dem Plugin **Qt Development Skills** (Qt Group) für QML.
-Die Commits mit KI-Beteiligung sind mit `Co-Authored-By: Claude` gekennzeichnet.
+## How it was made
 
-Fehler gefunden oder eine Idee für ein neues Pet oder Minispiel? Gern als [Issue](https://github.com/patfrenken/widget-pet/issues).
+Widget Pet is a hobby project and was largely built with AI assistance (“vibe coded”):
+the idea, game concept, design decisions and testing are mine; the code was written with
+**Claude Opus 5.5** (Anthropic), using the **Qt Development Skills** plugin (Qt Group) for QML.
+Commits with AI involvement are marked with `Co-Authored-By: Claude`.
 
-## Lizenz
+Found a bug or have an idea for a new pet or mini game? Feel free to open an [issue](https://github.com/patfrenken/widget-pet/issues).
+
+## License
 
 [MIT](LICENSE)
